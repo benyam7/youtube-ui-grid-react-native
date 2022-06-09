@@ -15,7 +15,6 @@ export interface ThumbnailCardProps {
 }
 
 //not sure watching for live is the same up views. double check that on api response
-
 const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
         const {
             thumbnailUri,
@@ -41,7 +40,8 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
                 <View style={styles.videoDetailsContainer}>
                     <ChannelImage/>
                     <View style={styles.videoDetails}>
-                        <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime} isLive={isLive} views={views} watching={watching}/>
+                        <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime} isLive={isLive}
+                                      views={views} watching={watching}/>
                     </View>
 
                 </View>
@@ -84,30 +84,49 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
 
     return (
         <View style={styles.videoDetails}>
-            <Text numberOfLines={2} style={{fontWeight: "bold", marginRight: 20}}>
-                {title}
-            </Text>
-            <View style={{padding: 0, alignItems: "center", flexDirection: "row", marginTop: 10}}>
-                <Text style={{color: '#bcbdbd'}}>{channelName} </Text>
-                <Image source={require('./../../assets/ytcheckmark.webp')}
-                       style={{height: 10, width: 10}}/>
-            </View>
+            <Text numberOfLines={2} style={styles.title}>{title}</Text>
 
-            {!isLive && <View style={{flexDirection: "row", justifyContent: 'flex-start'}}>
-                <Text style={{color: '#bcbdbd'}}>{`${views} views`}</Text>
-                <Text style={{color: '#bcbdbd', marginLeft: 5}}>• {relativeTime}</Text>
-            </View>}
+            <ChannelNameAndCheckMarkIndicator channelName={channelName} checkMarkUri={checkMarkUri}/>
 
-            {isLive &&
-                <>
-                    <Text style={{color: '#bcbdbd'}}>{watching} watching</Text>
-                    <LiveIndicator/>
-                </>
+            {/*TODO: think how u cna improve this*/}
+            {
+                isLive ? <LiveVideoDetails watching={watching!!}/> :
+                    <PostedVideoDetails views={views!!} relativeTime={relativeTime}/>
             }
         </View>
     )
 }
 
+const PostedVideoDetails: FunctionComponent<{ views: number, relativeTime: string }> = (props) => {
+    const {views, relativeTime} = props
+    return (
+        <View style={styles.postedVideoDetailsContainer}>
+            <Text style={{color: '#bcbdbd'}}>{`${views} views`}</Text>
+            <Text style={{color: '#bcbdbd', marginLeft: 5}}>• {relativeTime}</Text>
+        </View>
+    )
+}
+
+
+const LiveVideoDetails: FunctionComponent<{ watching: number }> = (props) => {
+    const {watching} = props
+    return (
+        <>
+            <Text style={{color: '#bcbdbd'}}>{watching} watching</Text>
+            <LiveIndicator/>
+        </>
+    )
+}
+const ChannelNameAndCheckMarkIndicator: FunctionComponent<{ channelName: string, checkMarkUri?: string }> = (props) => {
+    const {channelName, checkMarkUri} = props
+    return (
+        <View style={styles.channelNameAndCheckMarkContainer}>
+            <Text style={{color: '#bcbdbd'}}>{channelName} </Text>
+            <Image source={require('./../../assets/ytcheckmark.webp')}
+                   style={{height: 10, width: 10}}/>
+        </View>
+    )
+}
 // get back to this when u have time and refactor for the uri
 const ChannelImage = () => {
     return (
@@ -179,7 +198,10 @@ const styles = StyleSheet.create
     },
     videoDetails: {
         flex: 1,
+    },
+    title: {fontWeight: "bold", marginRight: 20},
+    channelNameAndCheckMarkContainer: {padding: 0, alignItems: "center", flexDirection: "row", marginTop: 10}
 
-    }
+    , postedVideoDetailsContainer: {flexDirection: "row", justifyContent: 'flex-start'}
 })
 export default ThumbnailCard;
