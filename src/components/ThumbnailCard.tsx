@@ -1,23 +1,47 @@
-import React from 'react';
+import React, {FunctionComponent} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 
-const ThumbnailCard = () => {
+export interface ThumbnailCardProps {
+    thumbnailUri: string,
+    channelImageUri: string,
+    title: string,
+    channelName: string,
+    checkMarkUri?: string,
+    views?: number,
+    relativeTime: string,
+    isLive: boolean,
+    watching?: number,
+    timeLength?: string
+}
+
+//not sure watching for live is the same up views. double check that on api response
+
+const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
+        const {
+            thumbnailUri,
+            channelImageUri,
+            title,
+            channelName,
+            checkMarkUri,
+            views,
+            relativeTime,
+            isLive,
+            watching,
+            timeLength
+        } = props.videoProps
         return (
             <View style={styles.wrapper}>
                 <Image
                     style={styles.thumbnailImage}
                     source={require('./../../assets/sample-thumbnail.webp')}
                 />
-                <TimeLengthIndicator />
+
+                {timeLength && <TimeLengthIndicator timeLength={timeLength}/>}
+
                 <View style={styles.videoDetailsContainer}>
                     <ChannelImage/>
                     <View style={styles.videoDetails}>
-                        <Text numberOfLines={2} style={{fontWeight: "bold", marginRight: 20}}>
-                            title goes here title goes
-                            here title goesgoes here title goesgoes here title goesgoes here title goes title goes heretitle
-                            goes heretitle goes herehere title goes here
-                        </Text>
-                        <UploadedVideo/>
+                        <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime} isLive={isLive} views={views} watching={watching}/>
                     </View>
 
                 </View>
@@ -26,22 +50,65 @@ const ThumbnailCard = () => {
         );
     }
 ;
-const UploadedVideo = () => {
+
+
+// change soruce  attrbittue latter to uri
+// const ThumbnailImage : FunctionComponent<{uri: string}> = (props) => {
+//     const {uri} = props
+//     console.log("uri", typeof uri)
+//     return (
+//
+//     )
+// }
+
+interface VideoDetailsProps {
+    title: string,
+    channelName: string,
+    checkMarkUri?: string,
+    views?: number,
+    relativeTime: string,
+    isLive: boolean,
+    watching?: number,
+}
+
+const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
+    const {
+        title,
+        channelName,
+        checkMarkUri,
+        views,
+        relativeTime,
+        isLive,
+        watching,
+    } = props
+
     return (
-        <>
+        <View style={styles.videoDetails}>
+            <Text numberOfLines={2} style={{fontWeight: "bold", marginRight: 20}}>
+                {title}
+            </Text>
             <View style={{padding: 0, alignItems: "center", flexDirection: "row", marginTop: 10}}>
-                <Text style={{color: '#bcbdbd'}}>Channel name goes here </Text>
+                <Text style={{color: '#bcbdbd'}}>{channelName} </Text>
                 <Image source={require('./../../assets/ytcheckmark.webp')}
                        style={{height: 10, width: 10}}/>
             </View>
-            <View style={{flexDirection: "row", justifyContent: 'flex-start'}}>
-                <Text style={{color: '#bcbdbd'}}>679k views</Text>
-                <Text style={{color: '#bcbdbd', marginLeft: 5}}>• 3 hours ago</Text>
-            </View>
-            <LiveIndicator/>
-        </>
+
+            {!isLive && <View style={{flexDirection: "row", justifyContent: 'flex-start'}}>
+                <Text style={{color: '#bcbdbd'}}>{`${views} views`}</Text>
+                <Text style={{color: '#bcbdbd', marginLeft: 5}}>• {relativeTime}</Text>
+            </View>}
+
+            {isLive &&
+                <>
+                    <Text style={{color: '#bcbdbd'}}>{watching} watching</Text>
+                    <LiveIndicator/>
+                </>
+            }
+        </View>
     )
 }
+
+// get back to this when u have time and refactor for the uri
 const ChannelImage = () => {
     return (
         <View style={styles.channelImageContainer}>
@@ -67,10 +134,12 @@ const LiveIndicator = () => {
     )
 }
 
-const TimeLengthIndicator = () => {
+const TimeLengthIndicator: FunctionComponent<{ timeLength: string }> = (props) => {
+    const {timeLength} = props
     return (
-        <View style={{backgroundColor: 'black', position: 'absolute', top: 165, left: 325, borderRadius: 2, padding: 1}}>
-            <Text style={{textAlign: 'center', color: 'white'}}> 5: 50: 10</Text>
+        <View
+            style={{backgroundColor: 'black', position: 'absolute', top: 165, left: 325, borderRadius: 2, padding: 1,}}>
+            <Text style={{textAlign: 'center', color: 'white'}}>{timeLength}</Text>
         </View>
     )
 }
