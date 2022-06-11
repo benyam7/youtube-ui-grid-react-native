@@ -1,9 +1,9 @@
 import * as React from 'react';
+import {useEffect} from 'react';
 import ThumbnailCard, {ThumbnailCardProps} from "../components/ThumbnailCard";
 import {FlatList, StyleSheet, Text} from "react-native";
-import {useInfiniteQuery} from "react-query";
-import {gamesApi} from "../api";
-import {useEffect} from "react";
+import {useInfiniteQuery, useQuery} from "react-query";
+import {youtubeApi} from "../api";
 
 const testThumbnailCardData: ThumbnailCardProps[] = []
 const populateArray = () => {
@@ -29,28 +29,29 @@ const Home = () => {
     const {
         isLoading,
         data,
-        hasNextPage,
-        fetchNextPage,
-        isFetchingNextPage,
+        // hasNextPage,
+        // fetchNextPage,
+        // isFetchingNextPage,
         isPreviousData
-    } = useInfiniteQuery('games', gamesApi.fetchAllGames, {
-        getNextPageParam: lastPage => {
-            if (lastPage.next !== null) {
-                return lastPage.next
-            }
-            return lastPage;
-        }
-    });
+    } = useQuery('programming_videos', youtubeApi.getProgrammingVideos,
+
+        // {
+    //     getNextPageParam: lastPage => {
+    //         if (lastPage.nextPageToken !== null) {
+    //             return lastPage.nextPageToken
+    //         }
+    //         return lastPage;
+    //     }
+    // }
+    );
 
 
-   useEffect(() => {
-       if(hasNextPage,){
-           fetchNextPage();
-       }
-   }, [data])
+    useEffect(() => {
+      console.log("useEffect", data)
+    }, [data])
 
     const renderTestData = ({item}) => {
-        return (<><Text>{item.name}</Text></>)
+        return (<Text>{item.snippet.title}</Text>)
     }
 
     const renderLoading = () => {
@@ -59,9 +60,14 @@ const Home = () => {
     return (
         isLoading ? (
             <Text>Loading...</Text>
-        ) : <FlatList data={data.pages.map(page => page.results).flat()} renderItem={renderTestData}
-                      keyExtractor={(item, index) => index.toString()} onEndReached={fetchNextPage} onEndReachedThreshold={0}
-                      ListFooterComponent={isFetchingNextPage ? renderLoading : null}/>
+        ) : <FlatList data={
+            data.items
+        } renderItem={renderTestData}
+                      keyExtractor={(item, index) => index.toString()}
+                      // onEndReached={fetchNextPage}
+                      // onEndReachedThreshold={0}
+                      // ListFooterComponent={isFetchingNextPage ? renderLoading : null}
+        />
 
         // <SafeAreaView style={styles.appContainer}>
         //     <List/>
