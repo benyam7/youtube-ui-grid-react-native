@@ -1,6 +1,8 @@
 import * as React from 'react';
 import ThumbnailCard, {ThumbnailCardProps} from "../components/ThumbnailCard";
-import {FlatList, SafeAreaView, StyleSheet} from "react-native";
+import {FlatList, StyleSheet, Text} from "react-native";
+import {useQuery} from "react-query";
+import {gamesApi} from "../api";
 
 const testThumbnailCardData: ThumbnailCardProps[] = []
 const populateArray = () => {
@@ -22,22 +24,32 @@ const populateArray = () => {
 populateArray()
 
 const Home = () => {
+    const {isLoading, data} = useQuery('games', gamesApi.fetchAllGames);
 
+    const renderTestData = ({item}) => {
+        return (<><Text>{item.name}</Text></>)
+    }
     return (
-        <SafeAreaView>
-            <List/>
-        </SafeAreaView>
+        isLoading ? (
+            <Text>Loading...</Text>
+        ) : <FlatList data={data.results} renderItem={renderTestData} keyExtractor={(item, index) => index.toString()}/>
+        // <SafeAreaView style={styles.appContainer}>
+        //     <List/>
+        // </SafeAreaView>
 
     );
 };
-const renderItem = ({item}: {item: ThumbnailCardProps}) => {
+const renderItem = ({item}: { item: ThumbnailCardProps }) => {
     return (<ThumbnailCard videoProps={item}/>)
 }
+
+
 const List = () => {
-    console.log(testThumbnailCardData, "testThumbnailCardData")
+    //use Flatlist for mobile(ios and android) and idk find something for web.
     return (
         <FlatList data={testThumbnailCardData} renderItem={renderItem}
                   keyExtractor={(item, index) => index.toString()}/>
+
     )
 }
 const styles = StyleSheet.create({
