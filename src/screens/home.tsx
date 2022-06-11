@@ -1,8 +1,9 @@
 import * as React from 'react';
 import ThumbnailCard, {ThumbnailCardProps} from "../components/ThumbnailCard";
 import {FlatList, StyleSheet, Text} from "react-native";
-import {useQuery} from "react-query";
+import {useInfiniteQuery} from "react-query";
 import {gamesApi} from "../api";
+import {useEffect} from "react";
 
 const testThumbnailCardData: ThumbnailCardProps[] = []
 const populateArray = () => {
@@ -24,20 +25,50 @@ const populateArray = () => {
 populateArray()
 
 const Home = () => {
-    const {isLoading, data} = useQuery('games', gamesApi.fetchAllGames);
+
+    const {
+        isLoading,
+        data,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
+        isPreviousData
+    } = useInfiniteQuery('games', gamesApi.fetchAllGames, {
+        getNextPageParam: lastPage => {
+            if (lastPage.next !== null) {
+                return lastPage.next
+            }
+            return lastPage;
+        }
+    });
+
+
+   useEffect(() => {
+       if(hasNextPage,){
+           fetchNextPage();
+       }
+   }, [data])
 
     const renderTestData = ({item}) => {
         return (<><Text>{item.name}</Text></>)
     }
+
+    const renderLoading = () => {
+        return (<Text>Loading...</Text>)
+    }
     return (
         isLoading ? (
             <Text>Loading...</Text>
-        ) : <FlatList data={data.results} renderItem={renderTestData} keyExtractor={(item, index) => index.toString()}/>
+        ) : <FlatList data={data.pages.map(page => page.results).flat()} renderItem={renderTestData}
+                      keyExtractor={(item, index) => index.toString()} onEndReached={fetchNextPage} onEndReachedThreshold={0}
+                      ListFooterComponent={isFetchingNextPage ? renderLoading : null}/>
+
         // <SafeAreaView style={styles.appContainer}>
         //     <List/>
         // </SafeAreaView>
 
-    );
+    )
+        ;
 };
 const renderItem = ({item}: { item: ThumbnailCardProps }) => {
     return (<ThumbnailCard videoProps={item}/>)
