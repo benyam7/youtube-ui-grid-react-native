@@ -1,8 +1,8 @@
 import * as React from 'react';
 import ThumbnailCard, {ThumbnailCardProps} from "../components/ThumbnailCard";
-import {ScrollView, StyleSheet, View} from "react-native";
+import {FlatList, SafeAreaView, StyleSheet} from "react-native";
 
-const testThumbnailCardData: ThumbnailCardProps[] = new Array(10)
+const testThumbnailCardData: ThumbnailCardProps[] = []
 const populateArray = () => {
     for (let i = 0; i < 10; i++) {
         testThumbnailCardData.push({
@@ -20,21 +20,26 @@ const populateArray = () => {
     }
 }
 populateArray()
+
 const Home = () => {
+
     return (
-        <ScrollView>
-            <View style={styles.appContainer}>
-                {
-                    testThumbnailCardData.map((videoProps, i) => {
-                        return <ThumbnailCard key={i} videoProps={videoProps}/>
-                    })
-                }
-            </View>
-        </ScrollView>
+        <SafeAreaView>
+            <List/>
+        </SafeAreaView>
 
     );
 };
-
+const renderItem = ({item}: {item: ThumbnailCardProps}) => {
+    return (<ThumbnailCard videoProps={item}/>)
+}
+const List = () => {
+    console.log(testThumbnailCardData, "testThumbnailCardData")
+    return (
+        <FlatList data={testThumbnailCardData} renderItem={renderItem}
+                  keyExtractor={(item, index) => index.toString()}/>
+    )
+}
 const styles = StyleSheet.create({
     appContainer: {
         flex: 1,
