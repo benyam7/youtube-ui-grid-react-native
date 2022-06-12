@@ -1,8 +1,7 @@
 import * as React from 'react';
-import {useEffect} from 'react';
 import ThumbnailCard, {ThumbnailCardProps} from "../components/ThumbnailCard";
 import {FlatList, StyleSheet, Text} from "react-native";
-import {useInfiniteQuery, useQuery} from "react-query";
+import {useInfiniteQuery} from "react-query";
 import {youtubeApi} from "../api";
 
 const testThumbnailCardData: ThumbnailCardProps[] = []
@@ -29,29 +28,25 @@ const Home = () => {
     const {
         isLoading,
         data,
-        // hasNextPage,
-        // fetchNextPage,
-        // isFetchingNextPage,
+        hasNextPage,
+        fetchNextPage,
+        isFetchingNextPage,
         isPreviousData
-    } = useQuery('programming_videos', youtubeApi.getProgrammingVideos,
+    } = useInfiniteQuery('programming_videos', youtubeApi.getProgrammingVideos,
 
-        // {
-    //     getNextPageParam: lastPage => {
-    //         if (lastPage.nextPageToken !== null) {
-    //             return lastPage.nextPageToken
-    //         }
-    //         return lastPage;
-    //     }
-    // }
+        {
+            getNextPageParam: lastPage => {
+                if (lastPage.nextPageToken !== null) {
+                    return lastPage.nextPageToken
+                }
+                return lastPage;
+            }
+        }
     );
 
 
-    useEffect(() => {
-      console.log("useEffect", data)
-    }, [data])
-
     const renderTestData = ({item}) => {
-        return (<Text>{item.snippet.title}</Text>)
+        return (<Text>{item.snippet.description}</Text>)
     }
 
     const renderLoading = () => {
@@ -61,12 +56,13 @@ const Home = () => {
         isLoading ? (
             <Text>Loading...</Text>
         ) : <FlatList data={
-            data.items
-        } renderItem={renderTestData}
+            data?.pages?.map(page => page.items).flat()
+        }
+                      renderItem={renderTestData}
                       keyExtractor={(item, index) => index.toString()}
-                      // onEndReached={fetchNextPage}
-                      // onEndReachedThreshold={0}
-                      // ListFooterComponent={isFetchingNextPage ? renderLoading : null}
+                      onEndReached={fetchNextPage}
+                      onEndReachedThreshold={0.5}
+                      ListFooterComponent={isFetchingNextPage ? renderLoading : null}
         />
 
         // <SafeAreaView style={styles.appContainer}>
