@@ -1,5 +1,8 @@
-import React, {FunctionComponent, useRef} from 'react';
-import {Animated, Image, StyleSheet, Text, View} from 'react-native';
+import React, {FunctionComponent, MutableRefObject} from 'react';
+import {Image, StyleSheet, Text, View} from 'react-native';
+import useHover from "../util/useHover";
+import {Tooltip} from "./Tooltip";
+import {useMouseMove} from "../util/useMouseMove";
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -16,26 +19,12 @@ export interface ThumbnailCardProps {
 
 //not sure watching for live is the same up views. double check that on api response
 const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
-        // fadeAnim will be used as the value for opacity. Initial Value: 0
-        const fadeAnim = useRef(new Animated.Value(0)).current;
+        const [thumbImageHoverRef, isHoveringOnThumbImage] = useHover()
+        const [channelImageHoverRef, isHoveringOnChannelImage] = useHover()
 
-        const fadeIn = () => {
-            // Will change fadeAnim value to 1 in 5 seconds
-            Animated.timing(fadeAnim, {
-                toValue: 1,
-                duration: 5000
-            }).start();
-        };
-
-        const fadeOut = () => {
-            // Will change fadeAnim value to 0 in 3 seconds
-            Animated.timing(fadeAnim, {
-                toValue: 0,
-                duration: 3000
-            }).start();
-        };
-
-
+        if (isHoveringOnChannelImage) {
+            console.log("hovering on image")
+        }
         const {
             thumbnailUri,
             channelImageUri,
@@ -48,35 +37,31 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
             watching,
             timeLength
         } = props.videoProps
+
         return (
             <View style={styles.wrapper}>
-                <Animated.View
-                    style={[
-                        styles.fadingContainer,
-                        {
-                            // Bind opacity to animated value
-                            opacity: fadeAnim
-                        }
-                    ]}
-                >
-                    {/*<Image*/}
-                    {/*    style={styles.thumbnailImage}*/}
-                    {/*    source={require('./../../assets/sample-thumbnail.webp')}*/}
-                    {/*/>*/}
-                    <Text style={styles.fadingText}>Fading View!</Text>
-                </Animated.View>
+                {/*TODO: replace the source with uri from api*/}
+                <Image
+                    ref={thumbImageHoverRef}
+                    style={styles.thumbnailImage}
+                    source={require('./../../assets/sample-thumbnail.webp')}
+                />
 
-                    {timeLength && <TimeLengthIndicator timeLength={timeLength}/>}
+                {isHoveringOnThumbImage && <Tooltip message={"Keep hovering to play"} position={{top: 165, left: 250}}/>}
+                {isHoveringOnChannelImage &&
+                    <Tooltip hasBorders={true} message={channelName} position={{top: 255, left: 40}}/>}
 
-                    <View style={styles.videoDetailsContainer}>
-                        <ChannelImage/>
-                        <View style={styles.videoDetails}>
-                            <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
-                                          isLive={isLive}
-                                          views={views} watching={watching}/>
-                        </View>
+                {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
+                <View style={styles.videoDetailsContainer} >
+                    <ChannelImage channelImageRef={channelImageHoverRef}/>
+                    <View style={styles.videoDetails}>
+                        <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
+                                      isLive={isLive}
+                                      views={views} watching={watching}/>
                     </View>
+
+                </View>
             </View>
         );
     }
@@ -159,10 +144,12 @@ const ChannelNameAndCheckMarkIndicator: FunctionComponent<{ channelName: string,
     )
 }
 // get back to this when u have time and refactor for the uri
-const ChannelImage = () => {
+const ChannelImage: FunctionComponent<{ channelImageRef: boolean | MutableRefObject<null> }> = (props) => {
+    const {channelImageRef} = props
     return (
         <View style={styles.channelImageContainer}>
-            <Image style={styles.channelImage} source={require('./../../assets/sample-thumbnail.webp')}/>
+            <Image ref={channelImageRef} style={styles.channelImage}
+                   source={require('./../../assets/sample-thumbnail.webp')}/>
         </View>
     )
 }
@@ -187,9 +174,18 @@ const LiveIndicator = () => {
 const TimeLengthIndicator: FunctionComponent<{ timeLength: string }> = (props) => {
     const {timeLength} = props
     return (
+
         <View
-            style={{backgroundColor: 'black', position: 'absolute', top: 165, left: 325, borderRadius: 2, padding: 1,}}>
-            <Text style={{textAlign: 'center', color: 'white'}}>{timeLength}</Text>
+            style={{
+                backgroundColor: 'black',
+                position: 'absolute',
+                top: 165,
+                left: 325,
+                padding: 1,
+            }}>
+            <View style={{maxWidth: 100, flex: 1}}>
+                <Text style={{textAlign: 'center', color: 'white',}}>{timeLength}</Text>
+            </View>
         </View>
     )
 }
