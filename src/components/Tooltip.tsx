@@ -1,15 +1,16 @@
 import React, {FunctionComponent} from 'react'
-import {StyleSheet, Text, View} from "react-native";
+import {Text, View} from "react-native";
 
-export const Tooltip: FunctionComponent<{ message: string, hasBorders?: boolean, position: { top: number, left: number } }> = (props) => {
-    const {hasBorders, message, position: {top, left}} = props
+export const Tooltip: FunctionComponent<{ message: string, overriddenStyles?: {}, hasBorders?: boolean, position: { top: number, left: number } }> = (props) => {
+    const {overriddenStyles, hasBorders, message, position: {top, left}} = props
     const borderStyles = hasBorders ? {
-        borderWidth: 2,
+        borderWidth: 1,
         borderStyle: 'solid',
         borderColor: '#858485',
-        borderRadius: 0.5,
         padding: 2,
     } : {}
+
+    const overrideStyles = overriddenStyles ? overriddenStyles : {}
 
     return (
         <View
@@ -20,7 +21,8 @@ export const Tooltip: FunctionComponent<{ message: string, hasBorders?: boolean,
                 left: left,
                 padding: 1,
                 zIndex: 20,
-                ...borderStyles
+                ...borderStyles,
+                ...overrideStyles
             }}>
             <Text style={{textAlign: 'center', color: 'white'}}>{message}</Text>
         </View>

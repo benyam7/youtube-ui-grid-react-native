@@ -2,7 +2,7 @@ import React, {FunctionComponent, MutableRefObject} from 'react';
 import {Image, StyleSheet, Text, View} from 'react-native';
 import useHover from "../util/useHover";
 import {Tooltip} from "./Tooltip";
-import {useMouseMove} from "../util/useMouseMove";
+import {Entypo} from '@expo/vector-icons';
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -19,12 +19,13 @@ export interface ThumbnailCardProps {
 
 //not sure watching for live is the same up views. double check that on api response
 const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
-        const [thumbImageHoverRef, isHoveringOnThumbImage] = useHover()
-        const [channelImageHoverRef, isHoveringOnChannelImage] = useHover()
+        const [thumbImageRef, isHoveringOnThumbImage] = useHover()
+        const [channelImageRef, isHoveringOnChannelImage] = useHover()
+        const [titleRef, isHoveringOnTittle] = useHover()
+        const [channelNameRef, isHoveringOnChannelName] = useHover()
+        const [checkMarkRef, isHoveringOnCheckMark] = useHover()
+        const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
 
-        if (isHoveringOnChannelImage) {
-            console.log("hovering on image")
-        }
         const {
             thumbnailUri,
             channelImageUri,
@@ -39,26 +40,54 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
         } = props.videoProps
 
         return (
-            <View style={styles.wrapper}>
+            <View style={styles.wrapper} ref={thumbnailCardRef}>
                 {/*TODO: replace the source with uri from api*/}
                 <Image
-                    ref={thumbImageHoverRef}
+                    ref={thumbImageRef}
                     style={styles.thumbnailImage}
                     source={require('./../../assets/sample-thumbnail.webp')}
                 />
 
                 {isHoveringOnThumbImage && <Tooltip message={"Keep hovering to play"} position={{top: 165, left: 250}}/>}
                 {isHoveringOnChannelImage &&
-                    <Tooltip hasBorders={true} message={channelName} position={{top: 255, left: 40}}/>}
+                    <Tooltip hasBorders={true} message={channelName} position={{top: 255, left: 40}} overriddenStyles={{
+                        paddingTop: 5,
+                        paddingBottom: 5,
+                        paddingLeft: 2,
+                        paddingRight: 2
+                    }}/>}
+                {isHoveringOnTittle && <Tooltip hasBorders={true} message={title} position={{top: 255, left: 100}}/>}
+
+                {isHoveringOnChannelName && <Tooltip overriddenStyles={{
+                    backgroundColor: 'gray',
+                    paddingTop: 5,
+                    paddingBottom: 5,
+                    paddingLeft: 3,
+                    paddingRight: 3,
+                    borderRadius: 2,
+                }} message={channelName} position={{top: 210, left: 75}}/>}
+                {isHoveringOnCheckMark && <Tooltip overriddenStyles={{
+                    backgroundColor: 'gray',
+                    paddingTop: 5,
+                    paddingBottom: 5,
+                    paddingLeft: 3,
+                    paddingRight: 3,
+                    borderRadius: 2,
+                }} message={"Verified"} position={{top: 210, left: 150}}/>}
 
                 {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
-                <View style={styles.videoDetailsContainer} >
-                    <ChannelImage channelImageRef={channelImageHoverRef}/>
+                <View style={styles.videoDetailsContainer}>
+                    <ChannelImage channelImageRef={channelImageRef}/>
                     <View style={styles.videoDetails}>
                         <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
                                       isLive={isLive}
-                                      views={views} watching={watching}/>
+                                      views={views} watching={watching} hoverDetails={{
+                            channelNameRef: channelNameRef,
+                            titleRef: titleRef,
+                            checkMarkRef: checkMarkRef,
+                            isHoveringOnThumbnailCard: isHoveringOnThumbnailCard
+                        }}/>
                     </View>
 
                 </View>
@@ -85,6 +114,12 @@ interface VideoDetailsProps {
     relativeTime: string,
     isLive: boolean,
     watching?: number,
+    hoverDetails: {
+        titleRef: boolean | MutableRefObject<null>,
+        channelNameRef: boolean | MutableRefObject<null>,
+        checkMarkRef?: boolean | MutableRefObject<null>,
+        isHoveringOnThumbnailCard: boolean | MutableRefObject<null>,
+    }
 }
 
 const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
@@ -96,13 +131,18 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
         relativeTime,
         isLive,
         watching,
+        hoverDetails: {titleRef, checkMarkRef, channelNameRef, isHoveringOnThumbnailCard}
     } = props
 
     return (
         <View style={styles.videoDetails}>
-            <Text numberOfLines={2} style={styles.title}>{title}</Text>
+            <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+                <Text ref={titleRef} numberOfLines={2} style={styles.title}>{title}</Text>
+                {isHoveringOnThumbnailCard && <Entypo name="dots-three-vertical" size={24} color="black"/>}
+            </View>
 
-            <ChannelNameAndCheckMarkIndicator channelName={channelName} checkMarkUri={checkMarkUri}/>
+            <ChannelNameAndCheckMarkIndicator channelAndCheckMarkRef={{channelNameRef, checkMarkRef}}
+                                              channelName={channelName} checkMarkUri={checkMarkUri}/>
 
             {/*TODO: think how u cna improve this*/}
             {
@@ -133,12 +173,12 @@ const LiveVideoDetails: FunctionComponent<{ watching: number }> = (props) => {
         </>
     )
 }
-const ChannelNameAndCheckMarkIndicator: FunctionComponent<{ channelName: string, checkMarkUri?: string }> = (props) => {
-    const {channelName, checkMarkUri} = props
+const ChannelNameAndCheckMarkIndicator: FunctionComponent<{ channelName: string, checkMarkUri?: string, channelAndCheckMarkRef: { channelNameRef: boolean | MutableRefObject<null>, checkMarkRef: boolean | MutableRefObject<null> } }> = (props) => {
+    const {channelName, checkMarkUri, channelAndCheckMarkRef: {channelNameRef, checkMarkRef}} = props
     return (
         <View style={styles.channelNameAndCheckMarkContainer}>
-            <Text style={{color: '#bcbdbd'}}>{channelName} </Text>
-            <Image source={require('./../../assets/ytcheckmark.webp')}
+            <Text ref={channelNameRef} style={{color: '#bcbdbd'}}>{channelName} </Text>
+            <Image ref={checkMarkRef} source={require('./../../assets/ytcheckmark.webp')}
                    style={{height: 10, width: 10}}/>
         </View>
     )
