@@ -1,5 +1,5 @@
-import React, {FunctionComponent} from 'react';
-import {Image, StyleSheet, Text, View} from 'react-native';
+import React, {FunctionComponent, useRef} from 'react';
+import {Animated, Image, StyleSheet, Text, View} from 'react-native';
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -16,6 +16,26 @@ export interface ThumbnailCardProps {
 
 //not sure watching for live is the same up views. double check that on api response
 const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
+        // fadeAnim will be used as the value for opacity. Initial Value: 0
+        const fadeAnim = useRef(new Animated.Value(0)).current;
+
+        const fadeIn = () => {
+            // Will change fadeAnim value to 1 in 5 seconds
+            Animated.timing(fadeAnim, {
+                toValue: 1,
+                duration: 5000
+            }).start();
+        };
+
+        const fadeOut = () => {
+            // Will change fadeAnim value to 0 in 3 seconds
+            Animated.timing(fadeAnim, {
+                toValue: 0,
+                duration: 3000
+            }).start();
+        };
+
+
         const {
             thumbnailUri,
             channelImageUri,
@@ -30,22 +50,33 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
         } = props.videoProps
         return (
             <View style={styles.wrapper}>
-                <Image
-                    style={styles.thumbnailImage}
-                    source={require('./../../assets/sample-thumbnail.webp')}
-                />
+                <Animated.View
+                    style={[
+                        styles.fadingContainer,
+                        {
+                            // Bind opacity to animated value
+                            opacity: fadeAnim
+                        }
+                    ]}
+                >
+                    {/*<Image*/}
+                    {/*    style={styles.thumbnailImage}*/}
+                    {/*    source={require('./../../assets/sample-thumbnail.webp')}*/}
+                    {/*/>*/}
+                    <Text style={styles.fadingText}>Fading View!</Text>
+                </Animated.View>
 
-                {timeLength && <TimeLengthIndicator timeLength={timeLength}/>}
+                    {timeLength && <TimeLengthIndicator timeLength={timeLength}/>}
 
-                <View style={styles.videoDetailsContainer}>
-                    <ChannelImage/>
-                    <View style={styles.videoDetails}>
-                        <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime} isLive={isLive}
-                                      views={views} watching={watching}/>
+                    <View style={styles.videoDetailsContainer}>
+                        <ChannelImage/>
+                        <View style={styles.videoDetails}>
+                            <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
+                                          isLive={isLive}
+                                          views={views} watching={watching}/>
+                        </View>
+
                     </View>
-
-                </View>
-
             </View>
         );
     }
@@ -91,7 +122,7 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
             {/*TODO: think how u cna improve this*/}
             {
                 isLive ? <LiveVideoDetails watching={watching!!}/> :
-                    <PostedVideoDetails views={views!!} relativeTime={relativeTime}/>
+                    <PostedVideoDetails views={`${views!!}`} relativeTime={relativeTime}/>
             }
         </View>
     )
@@ -101,7 +132,7 @@ const PostedVideoDetails: FunctionComponent<{ views: number, relativeTime: strin
     const {views, relativeTime} = props
     return (
         <View style={styles.postedVideoDetailsContainer}>
-            <Text style={{color: '#bcbdbd'}}>{`${views} views`}</Text>
+            <Text style={{color: '#bcbdbd'}}>{`${views}K views`}</Text>
             <Text style={{color: '#bcbdbd', marginLeft: 5}}>• {relativeTime}</Text>
         </View>
     )
@@ -176,7 +207,8 @@ const styles = StyleSheet.create
     thumbnailImage:
         {
             flex: 1,
-            marginBottom: 20
+            marginBottom: 20,
+
         }
     ,
     videoDetailsContainer:
@@ -202,6 +234,15 @@ const styles = StyleSheet.create
     title: {fontWeight: "bold", marginRight: 20},
     channelNameAndCheckMarkContainer: {padding: 0, alignItems: "center", flexDirection: "row", marginTop: 10}
 
-    , postedVideoDetailsContainer: {flexDirection: "row", justifyContent: 'flex-start'}
+    , postedVideoDetailsContainer: {flexDirection: "row", justifyContent: 'flex-start'},
+    fadingContainer: {
+        padding: 20,
+        backgroundColor: "powderblue"
+    },
+    fadingText: {
+        fontSize: 28,
+        color: "black"
+    },
+
 })
 export default ThumbnailCard;
