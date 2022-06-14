@@ -1,6 +1,4 @@
-import React, {useEffect, useRef} from 'react'
-import {useState} from "react";
-import {Text} from 'react-native'
+import React, {useEffect, useRef, useState} from 'react'
 
 export default function useHover() {
   const [value, setValue] = useState(false);
