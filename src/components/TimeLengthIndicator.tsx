@@ -9,8 +9,8 @@ const TimeLengthIndicator: FunctionComponent<{ timeLength: string }> = (props) =
             style={{
                 backgroundColor: 'black',
                 position: 'absolute',
-                top: 165,
-                left: 325,
+                top: 155,
+                left: 255,
                 padding: 1,
             }}>
             <View style={{maxWidth: 100, flex: 1}}>

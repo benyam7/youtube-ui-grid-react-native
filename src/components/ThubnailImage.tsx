@@ -17,7 +17,8 @@ const ThumbnailImage: FunctionComponent<{ thumbImageRef: boolean | MutableRefObj
 const styles = StyleSheet.create({
     thumbnailImage:
         {
-            flex: 1,
+            width: 320,
+            height: 180,
             marginBottom: 20,
         }
 })

@@ -78,14 +78,15 @@ const Home = () => {
         ;
 };
 
-const renderThumbnailCard = ({item}) => {
+const renderThumbnailCard = ({snippet}) => {
+
     const {
         publishedAt,
         title,
         liveBroadcastContent,
         thumbnails,
         channelTitle,
-    } = item
+    } = snippet
     const [year, month, day] = publishedAt.split('-')
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     return (
@@ -109,7 +110,7 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     const {data} = props
     console.log("data", data.pages.map(e => e.items).flat())
     return (
-        <View>
+        <View style={styles.webAppContainer}>
             {data?.pages?.map(page => page.items).flat().map(item => renderThumbnailCard(item))}
         </View>
     )
@@ -123,7 +124,7 @@ const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFe
         }
                   renderItem={renderThumbnailCard}
                   keyExtractor={(item, index) => index.toString()}
-                  onEndReached={loadMore}
+                   onEndReached={loadMore}
                   onEndReachedThreshold={0.5}
                   ListFooterComponent={isFetchingNextPage ? renderLoading : null}
         />)
@@ -132,13 +133,14 @@ const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFe
 const RenderPlatformSpecificComponents: FunctionComponent<{ data: any, renderItem: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
     const {data, loadMore, isFetchingNextPage, renderLoading} = props
 
-    const ui = Platform.OS === 'web' ? <RenderForWeb data={data}/> :
-        <RenderForMobile data={data} loadMore={loadMore} isFetchingNextPage={isFetchingNextPage}
-                         renderLoading={renderLoading}
+    // const ui = Platform.OS === 'web' ? <RenderForWeb data={data}/> :
+    //     <RenderForMobile data={data} loadMore={loadMore} isFetchingNextPage={isFetchingNextPage}
+    //                      renderLoading={renderLoading}
+    //
+    //     />
 
-        />
-
-    return ui
+    // return ui
+    return (<RenderForWeb data={data}/>)
 }
 
 const styles = StyleSheet.create({

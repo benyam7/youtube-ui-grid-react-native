@@ -1,5 +1,6 @@
 import {Tooltip} from "./Tooltip";
 import React, {FunctionComponent, MutableRefObject} from "react";
+import {Platform} from "react-native";
 
 const HoverAndTooltips: FunctionComponent<{
     hoverFlags: {
@@ -23,7 +24,7 @@ const HoverAndTooltips: FunctionComponent<{
     return (
         <>
             {
-                isHoveringOnThumbImage && <Tooltip message={"Keep hovering to play"} position={{top: 165, left: 250}}/>
+                isHoveringOnThumbImage && <Tooltip message={"Keep hovering to play"} position={{top: 155, left: 177}}/>
             }
             {
                 isHoveringOnChannelImage &&

@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {Platform, StyleSheet, View} from 'react-native';
 import useHover from "../util/useHover";
 import ThumbnailImage from "./ThubnailImage";
 import HoverAndTooltips from "./HoverAndTooltips";
@@ -31,10 +31,8 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
 
         const {
             thumbnailUri,
-            channelImageUri,
             title,
             channelName,
-            checkMarkUri,
             views,
             relativeTime,
             isLive,
@@ -45,15 +43,15 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
         return (
             <View style={styles.wrapper} ref={thumbnailCardRef}>
                 <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
-
-                <HoverAndTooltips hoverFlags={
-                    {
-                        isHoveringOnThumbImage,
-                        isHoveringOnChannelImage,
-                        isHoveringOnTittle,
-                        isHoveringOnChannelName,
-                        isHoveringOnCheckMark,
-                    }} data={{channelName, title}}/>
+                {Platform.OS === 'web' && (
+                    < HoverAndTooltips hoverFlags={
+                        {
+                            isHoveringOnThumbImage,
+                            isHoveringOnChannelImage,
+                            isHoveringOnTittle,
+                            isHoveringOnChannelName,
+                            isHoveringOnCheckMark,
+                        }} data={{channelName, title}}/>)}
 
                 {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
@@ -79,8 +77,7 @@ const styles = StyleSheet.create
 ({
     wrapper:
         {
-            width: 400,
-            height: 400,
+            width: 320,
             backgroundColor: '#f8f8f9',
             margin: 10,
         }
@@ -89,7 +86,7 @@ const styles = StyleSheet.create
         {
             flex: 1,
             flexDirection: "row",
-            justifyContent: "flex-start"
+            justifyContent: "flex-start",
         },
 
 })
