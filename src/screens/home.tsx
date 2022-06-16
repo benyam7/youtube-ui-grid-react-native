@@ -73,7 +73,7 @@ const renderThumbnailCardWeb = ({snippet,id: {videoId}}) => {
                 relativeTime,
                 isLive: liveBroadcastContent === "live",
                 watching: 400,
-                timeLength: "10: 20: 20"
+                timeLength: "9:20"
             }
         }/>
     )
@@ -101,7 +101,7 @@ const renderThumbnailCardMobile = ({item}) => {
                 relativeTime,
                 isLive: liveBroadcastContent === "live",
                 watching: 400,
-                timeLength: "10: 20: 20"
+                timeLength: "9:20"
             }
         }/>
     )

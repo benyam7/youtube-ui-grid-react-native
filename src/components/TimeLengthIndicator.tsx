@@ -1,5 +1,5 @@
 import React, {FunctionComponent} from "react";
-import {Text, View} from "react-native";
+import {Platform, Text, View} from "react-native";
 
 const TimeLengthIndicator: FunctionComponent<{ timeLength: string }> = (props) => {
     const {timeLength} = props
@@ -10,7 +10,7 @@ const TimeLengthIndicator: FunctionComponent<{ timeLength: string }> = (props) =
                 backgroundColor: 'black',
                 position: 'absolute',
                 top: 155,
-                left: 255,
+                left: Platform.OS === 'android' || Platform.OS === 'ios' ? 350: 290,
                 padding: 1,
             }}>
             <View style={{maxWidth: 100, flex: 1}}>
