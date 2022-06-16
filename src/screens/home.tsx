@@ -1,10 +1,11 @@
 import * as React from 'react';
-import {FunctionComponent} from 'react';
-import {FlatList, Platform, SafeAreaView, StyleSheet, Text, View} from "react-native";
+import {FunctionComponent, useState} from 'react';
+import {FlatList, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useInfiniteQuery} from "react-query";
 import {youtubeApi} from "../api";
 import moment from "moment";
 import ThumbnailCard from "../components/ThumbnailCard";
+import * as Animatable from "react-native-animatable";
 
 const Home = () => {
     console.log("Platform", Platform.OS)
@@ -50,8 +51,7 @@ const Home = () => {
         ;
 };
 
-const renderThumbnailCardWeb = ({snippet,id: {videoId}}) => {
-    console.log(snippet, "snippet")
+const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
 
     const {
         publishedAt,
@@ -62,25 +62,33 @@ const renderThumbnailCardWeb = ({snippet,id: {videoId}}) => {
     } = snippet
     const [year, month, day] = publishedAt.split('-')
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
+    const [bg, setBg] = useState({backgroundColor: 'purple'})
+
     return (
-        <ThumbnailCard key={videoId} videoProps={
-            {
-                thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
-                channelImageUri: thumbnails.default.url,
-                title: title,
-                channelName: channelTitle,
-                views: 997,
-                relativeTime,
-                isLive: liveBroadcastContent === "live",
-                watching: 400,
-                timeLength: "9:20"
-            }
-        }/>
+        <TouchableOpacity onPress={() => {
+            setBg({backgroundColor: 'red'})
+        }}>
+            <Animatable.View transition={"backgroundColor"} key={videoId} duration={2000}
+                             style={{backgroundColor: bg.backgroundColor || "purple"}}>
+                <ThumbnailCard key={videoId} videoProps={
+                    {
+                        thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
+                        channelImageUri: thumbnails.default.url,
+                        title: title,
+                        channelName: channelTitle,
+                        views: 997,
+                        relativeTime,
+                        isLive: liveBroadcastContent === "live",
+                        watching: 400,
+                        timeLength: "9:20"
+                    }
+                }/>
+            </Animatable.View>
+        </TouchableOpacity>
     )
 }
 
 const renderThumbnailCardMobile = ({item}) => {
-    console.log(item, "item for mobile")
     const {
         publishedAt,
         title,
@@ -109,9 +117,8 @@ const renderThumbnailCardMobile = ({item}) => {
 
 const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     const {data} = props
-    console.log("data", data.pages.map(e => e.items).flat())
     return (
-        <View style={styles.webAppContainer} >
+        <View style={styles.webAppContainer}>
             {data?.pages?.map(page => page.items).flat().map(item => renderThumbnailCardWeb(item))}
         </View>
     )
@@ -119,7 +126,6 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
 }
 const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
     const {data, loadMore, isFetchingNextPage, renderLoading} = props
-    console.log(data, "data for mobile")
     return (
         <SafeAreaView style={styles.mobileAppContainer}>
             <FlatList data={

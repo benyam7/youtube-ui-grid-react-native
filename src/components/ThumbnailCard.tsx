@@ -77,8 +77,26 @@ const mobileStylesForVideoDetailsContainer = Platform.OS === 'android' || Platfo
     paddingRight: 10,
     paddingBottom: 15
 } : {}
+
+
+const scaleStyleForThumbnailCardContainer = (isHovering: boolean) => {
+    setTimeout(() => {
+        if (isHovering) {
+            return {
+                transform: [{scale: 1.1}]
+            }
+        } else {
+            return {
+                transform: [{scale: 1}]
+            }
+        }
+    }, 2000)
+}
+
+
 const styles = StyleSheet.create
 ({
+
     wrapper:
         {
             width: Platform.OS === 'android' || Platform.OS === 'ios' ? "100%" : 320,
@@ -90,7 +108,8 @@ const styles = StyleSheet.create
         {
             flex: 1,
             flexDirection: "row",
-            ...mobileStylesForVideoDetailsContainer
+            ...mobileStylesForVideoDetailsContainer,
+
         },
 
 })

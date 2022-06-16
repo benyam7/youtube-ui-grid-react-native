@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     videoDetails: {
         flex: 1,
     },
-    title: {fontWeight: "bold",marginRight: 20 },
+    title: {fontWeight: "bold",marginRight: 10 },
 })
 
 export default VideoDetails
