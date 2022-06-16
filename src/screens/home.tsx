@@ -33,34 +33,6 @@ const Home = () => {
         }
     }
 
-    const renderThumbnailCard = ({item}) => {
-        const snippet = item.snippet
-        const {
-            publishedAt,
-            title,
-            liveBroadcastContent,
-            thumbnails,
-            channelTitle,
-        } = snippet
-        const [year, month, day] = publishedAt.split('-')
-        const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
-        return (
-            <ThumbnailCard videoProps={
-                {
-                    thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
-                    channelImageUri: thumbnails.default.url,
-                    title: title,
-                    channelName: channelTitle,
-                    views: 997,
-                    relativeTime,
-                    isLive: liveBroadcastContent === "live",
-                    watching: 400,
-                    timeLength: "10: 20: 20"
-                }
-            }/>
-        )
-    }
-
     const renderLoading = () => {
         return (<Text>Loading...</Text>)
     }
@@ -70,7 +42,7 @@ const Home = () => {
 
         isLoading ? (
             <Text>Loading...</Text>
-        ) : <RenderPlatformSpecificComponents data={data} renderItem={renderThumbnailCard} loadMore={loadMore}
+        ) : <RenderPlatformSpecificComponents data={data} loadMore={loadMore}
                                               isFetchingNextPage={isFetchingNextPage} renderLoading={renderLoading}/>
 
 
@@ -78,7 +50,7 @@ const Home = () => {
         ;
 };
 
-const renderThumbnailCard = ({snippet,id: {videoId}}) => {
+const renderThumbnailCardWeb = ({snippet,id: {videoId}}) => {
     console.log(snippet, "snippet")
 
     const {
@@ -140,7 +112,7 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     console.log("data", data.pages.map(e => e.items).flat())
     return (
         <View style={styles.webAppContainer} >
-            {data?.pages?.map(page => page.items).flat().map(item => renderThumbnailCard(item))}
+            {data?.pages?.map(page => page.items).flat().map(item => renderThumbnailCardWeb(item))}
         </View>
     )
 
@@ -162,7 +134,7 @@ const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFe
         </SafeAreaView>)
 }
 
-const RenderPlatformSpecificComponents: FunctionComponent<{ data: any, renderItem: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
+const RenderPlatformSpecificComponents: FunctionComponent<{ data: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
     const {data, loadMore, isFetchingNextPage, renderLoading} = props
 
     return Platform.OS === 'web' ? <RenderForWeb data={data}/> :

@@ -20,7 +20,6 @@ const HoverAndTooltips: FunctionComponent<{
             isHoveringOnCheckMark
         }, data: {channelName, title}
     } = props
-    console.log("isHoveringOnThumbImage", isHoveringOnThumbImage)
     return (
         <>
             {
