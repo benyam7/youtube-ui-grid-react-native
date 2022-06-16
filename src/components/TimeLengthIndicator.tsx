@@ -7,7 +7,7 @@ const TimeLengthIndicator: FunctionComponent<{ timeLength: string }> = (props) =
 
         <View
             style={{
-                backgroundColor: 'black',
+                width: 'black',
                 position: 'absolute',
                 top: 155,
                 left: Platform.OS === 'android' || Platform.OS === 'ios' ? 350: 290,

@@ -40,7 +40,7 @@ const HoverAndTooltips: FunctionComponent<{
 
             {
                 isHoveringOnChannelName && <Tooltip overriddenStyles={{
-                    backgroundColor: 'gray',
+                    width: 'gray',
                     paddingTop: 5,
                     paddingBottom: 5,
                     paddingLeft: 3,
@@ -50,7 +50,7 @@ const HoverAndTooltips: FunctionComponent<{
             }
             {
                 isHoveringOnCheckMark && <Tooltip overriddenStyles={{
-                    backgroundColor: 'gray',
+                    width: 'gray',
                     paddingTop: 5,
                     paddingBottom: 5,
                     paddingLeft: 3,

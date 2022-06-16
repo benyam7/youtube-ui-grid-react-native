@@ -62,14 +62,14 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     } = snippet
     const [year, month, day] = publishedAt.split('-')
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
-    const [bg, setBg] = useState({backgroundColor: 'purple'})
+    const [scale, setScale] = useState({scaleX: 1, scaleY: 1})
 
     return (
         <TouchableOpacity onPress={() => {
-            setBg({backgroundColor: 'red'})
+            setScale({scaleX: 1.1, scaleY: 1.1})
         }}>
-            <Animatable.View transition={"backgroundColor"} key={videoId} duration={2000}
-                             style={{backgroundColor: bg.backgroundColor || "purple"}}>
+            <Animatable.View transition={["scaleX", "scaleY"]} key={videoId} delay={2000}
+                             style={{scaleX: scale.scaleX, scaleY: scale.scaleY}}>
                 <ThumbnailCard key={videoId} videoProps={
                     {
                         thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/

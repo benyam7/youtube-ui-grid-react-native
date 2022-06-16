@@ -83,11 +83,11 @@ const scaleStyleForThumbnailCardContainer = (isHovering: boolean) => {
     setTimeout(() => {
         if (isHovering) {
             return {
-                transform: [{scale: 1.1}]
+                width: [{scale: 1.1}]
             }
         } else {
             return {
-                transform: [{scale: 1}]
+                width: [{scale: 1}]
             }
         }
     }, 2000)
