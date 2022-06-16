@@ -1,4 +1,4 @@
-import {Image, StyleSheet} from "react-native";
+import {Image, Platform, StyleSheet} from "react-native";
 import React, {FunctionComponent, MutableRefObject} from "react";
 
 
@@ -17,7 +17,7 @@ const ThumbnailImage: FunctionComponent<{ thumbImageRef: boolean | MutableRefObj
 const styles = StyleSheet.create({
     thumbnailImage:
         {
-            width: 320,
+            width: Platform.OS === 'android' || Platform.OS === 'ios' ? "100%" : 320,
             height: 180,
             marginBottom: 20,
         }

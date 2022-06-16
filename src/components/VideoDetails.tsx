@@ -1,5 +1,5 @@
 import React, {FunctionComponent, MutableRefObject} from "react";
-import {StyleSheet, Text, View} from "react-native";
+import {Platform, StyleSheet, Text, View} from "react-native";
 import {Entypo} from "@expo/vector-icons";
 import PostedVideoDetails from "./PostedVideo";
 import LiveVideoDetails from "./LiveBroadcastDetails";
@@ -37,7 +37,9 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
         <View style={styles.videoDetails}>
             <View style={{flexDirection: "row", justifyContent: "space-between"}}>
                 <Text ref={titleRef} numberOfLines={2} style={styles.title}>{title}</Text>
-                {isHoveringOnThumbnailCard && <Entypo name="dots-three-vertical" size={24} color="black"/>}
+                {isHoveringOnThumbnailCard  &&
+                    <Entypo name="dots-three-vertical" size={12} color="black" />}
+                {(Platform.OS === 'android' || Platform.OS === 'ios') &&  <Entypo name="dots-three-vertical" size={12} color="black" />}
             </View>
 
             <ChannelNameAndCheckMarkIndicator channelAndCheckMarkRef={{channelNameRef, checkMarkRef}}
@@ -56,7 +58,7 @@ const styles = StyleSheet.create({
     videoDetails: {
         flex: 1,
     },
-    title: {fontWeight: "bold", marginRight: 20},
+    title: {fontWeight: "bold",marginRight: 20 },
 })
 
 export default VideoDetails

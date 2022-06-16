@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FunctionComponent} from 'react';
-import {FlatList, Platform, StyleSheet, Text, View} from "react-native";
+import {FlatList, Platform, SafeAreaView, StyleSheet, Text, View} from "react-native";
 import {useInfiniteQuery} from "react-query";
 import {youtubeApi} from "../api";
 import moment from "moment";
@@ -78,7 +78,8 @@ const Home = () => {
         ;
 };
 
-const renderThumbnailCard = ({snippet}) => {
+const renderThumbnailCard = ({snippet,id: {videoId}}) => {
+    console.log(snippet, "snippet")
 
     const {
         publishedAt,
@@ -87,6 +88,34 @@ const renderThumbnailCard = ({snippet}) => {
         thumbnails,
         channelTitle,
     } = snippet
+    const [year, month, day] = publishedAt.split('-')
+    const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
+    return (
+        <ThumbnailCard key={videoId} videoProps={
+            {
+                thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
+                channelImageUri: thumbnails.default.url,
+                title: title,
+                channelName: channelTitle,
+                views: 997,
+                relativeTime,
+                isLive: liveBroadcastContent === "live",
+                watching: 400,
+                timeLength: "10: 20: 20"
+            }
+        }/>
+    )
+}
+
+const renderThumbnailCardMobile = ({item}) => {
+    console.log(item, "item for mobile")
+    const {
+        publishedAt,
+        title,
+        liveBroadcastContent,
+        thumbnails,
+        channelTitle,
+    } = item.snippet
     const [year, month, day] = publishedAt.split('-')
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     return (
@@ -110,7 +139,7 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     const {data} = props
     console.log("data", data.pages.map(e => e.items).flat())
     return (
-        <View style={styles.webAppContainer}>
+        <View style={styles.webAppContainer} >
             {data?.pages?.map(page => page.items).flat().map(item => renderThumbnailCard(item))}
         </View>
     )
@@ -118,29 +147,29 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
 }
 const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
     const {data, loadMore, isFetchingNextPage, renderLoading} = props
+    console.log(data, "data for mobile")
     return (
-        <FlatList data={
-            data?.pages?.map(page => page.items).flat()
-        }
-                  renderItem={renderThumbnailCard}
-                  keyExtractor={(item, index) => index.toString()}
-                   onEndReached={loadMore}
-                  onEndReachedThreshold={0.5}
-                  ListFooterComponent={isFetchingNextPage ? renderLoading : null}
-        />)
+        <SafeAreaView style={styles.mobileAppContainer}>
+            <FlatList data={
+                data.pages.map(e => e.items).flat()
+            }
+                      renderItem={renderThumbnailCardMobile}
+                      keyExtractor={(item, index) => index.toString()}
+                      onEndReached={loadMore}
+                      onEndReachedThreshold={0.5}
+                      ListFooterComponent={isFetchingNextPage ? renderLoading : null}
+            />
+        </SafeAreaView>)
 }
 
 const RenderPlatformSpecificComponents: FunctionComponent<{ data: any, renderItem: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
     const {data, loadMore, isFetchingNextPage, renderLoading} = props
 
-    // const ui = Platform.OS === 'web' ? <RenderForWeb data={data}/> :
-    //     <RenderForMobile data={data} loadMore={loadMore} isFetchingNextPage={isFetchingNextPage}
-    //                      renderLoading={renderLoading}
-    //
-    //     />
+    return Platform.OS === 'web' ? <RenderForWeb data={data}/> :
+        <RenderForMobile data={data} loadMore={loadMore} isFetchingNextPage={isFetchingNextPage}
+                         renderLoading={renderLoading}
 
-    // return ui
-    return (<RenderForWeb data={data}/>)
+        />
 }
 
 const styles = StyleSheet.create({
@@ -151,6 +180,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#f8f8f9',
+    },
+    mobileAppContainer: {
+        flex: 1,
+        alignItems: 'stretch',
     }
 })
 export default Home;

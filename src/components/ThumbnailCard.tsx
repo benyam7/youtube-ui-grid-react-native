@@ -22,12 +22,12 @@ export interface ThumbnailCardProps {
 
 //not sure watching for live is the same up views. double check that on api response
 const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
-        const [thumbImageRef, isHoveringOnThumbImage] = useHover()
-        const [channelImageRef, isHoveringOnChannelImage] = useHover()
-        const [titleRef, isHoveringOnTittle] = useHover()
-        const [channelNameRef, isHoveringOnChannelName] = useHover()
-        const [checkMarkRef, isHoveringOnCheckMark] = useHover()
-        const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
+        const [thumbImageRef, isHoveringOnThumbImage] = Platform.OS === 'web' ? useHover() : [null, false]
+        const [channelImageRef, isHoveringOnChannelImage] = Platform.OS === 'web' ? useHover() : [null, false]
+        const [titleRef, isHoveringOnTittle] = Platform.OS === 'web' ? useHover() : [null, false]
+        const [channelNameRef, isHoveringOnChannelName] = Platform.OS === 'web' ? useHover() : [null, false]
+        const [checkMarkRef, isHoveringOnCheckMark] = Platform.OS === 'web' ? useHover() : [null, false]
+        const [thumbnailCardRef, isHoveringOnThumbnailCard] = Platform.OS === 'web' ? useHover() : [null, false]
 
         const {
             thumbnailUri,
@@ -43,7 +43,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
         return (
             <View style={styles.wrapper} ref={thumbnailCardRef}>
                 <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
-                {Platform.OS === 'web' && (
+                {(Platform.OS === 'web') && (
                     < HoverAndTooltips hoverFlags={
                         {
                             isHoveringOnThumbImage,
@@ -72,21 +72,25 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
     }
 ;
 
-
+const mobileStylesForVideoDetailsContainer = Platform.OS === 'android' || Platform.OS === 'ios' ? {
+    paddingLeft: 10,
+    paddingRight: 10,
+    paddingBottom: 10
+} : {}
 const styles = StyleSheet.create
 ({
     wrapper:
         {
-            width: 320,
+            width: Platform.OS === 'android' || Platform.OS === 'ios' ? "100%" : 320,
             backgroundColor: '#f8f8f9',
-            margin: 10,
+            margin: Platform.OS === 'web' ? 10 : 0,
         }
     ,
     videoDetailsContainer:
         {
             flex: 1,
             flexDirection: "row",
-            justifyContent: "flex-start",
+            ...mobileStylesForVideoDetailsContainer
         },
 
 })
