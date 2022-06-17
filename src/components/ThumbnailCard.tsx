@@ -24,7 +24,7 @@ export interface ThumbnailCardProps {
 const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbImageHover?: { thumbImageRef?: React.MutableRefObject<null> | boolean, isHoveringOnThumbImage?: boolean } }>
         = ({
                videoProps,
-               thumbImageHover: {isHoveringOnThumbImage, thumbImageRef}
+                thumbImageHover: {isHoveringOnThumbImage, thumbImageRef}
            }) => {
         const [channelImageRef, isHoveringOnChannelImage] = Platform.OS === 'web' ? useHover() : [null, false]
         const [titleRef, isHoveringOnTittle] = Platform.OS === 'web' ? useHover() : [null, false]
@@ -86,7 +86,6 @@ const mobileStylesForVideoDetailsContainer = Platform.OS === 'android' || Platfo
 
 const styles = StyleSheet.create
 ({
-
     wrapper:
         {
             width: Platform.OS === 'android' || Platform.OS === 'ios' ? "100%" : 320,

@@ -62,24 +62,37 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     const [year, month, day] = publishedAt.split('-')
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     const [scale, setScale] = useState({scaleX: 1, scaleY: 1})
-
+    const [zIndex, setZIndex] = useState(0)
+    const nodes = []
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
 
     useEffect(() => {
         if (isHoveringOnThumbImage) {
-                setScale({scaleX: 1.1, scaleY: 1.1})
+            nodes.push(thumbImageRef)
+            // do not just play the anim for every hover, only when spending atleast 1 second on the image
+            if (nodes.length > 0 && nodes[0] === thumbImageRef) {
+                setScale({scaleX: 1.2, scaleY: 1.2})
+            }
+            setZIndex(100)
         } else {
             setScale({scaleX: 1, scaleY: 1})
+            setZIndex(0)
+            // do not just play the anim for every hover, only when spending atleast 1 second on the image
+            if (nodes.length > 0) {
+                nodes.pop()
+            }
         }
     }, [isHoveringOnThumbImage])
 
 
     return (
-        <TouchableOpacity key={videoId} onPress={() => {
-            setScale({scaleX: 1.1, scaleY: 1.1})
-        }}>
+        <TouchableOpacity key={videoId}>
             <Animatable.View transition={["scaleX", "scaleY"]} key={videoId} delay={1000}
-                             style={{scaleX: scale.scaleX, scaleY: scale.scaleY}}>
+                             style={{
+                                 scaleX: scale.scaleX,
+                                 scaleY: scale.scaleY,
+                                 zIndex: zIndex,
+                             }}>
                 <ThumbnailCard key={videoId} videoProps={
                     {
                         thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
@@ -122,7 +135,8 @@ const renderThumbnailCardMobile = ({item}) => {
                 watching: 400,
                 timeLength: "9:20"
             }
-        }/>
+        } thumbImageHover={{thumbImageHover: {isHoveringOnThumbImage: false, thumbImageRef: null}}}
+        />
     )
 }
 

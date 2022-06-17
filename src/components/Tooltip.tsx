@@ -15,7 +15,7 @@ export const Tooltip: FunctionComponent<{ message: string, overriddenStyles?: {}
     return (
         <View
             style={{
-                width: 'black',
+                backgroundColor: 'black',
                 position: 'absolute',
                 top: top,
                 left: left,
