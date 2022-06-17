@@ -21,8 +21,11 @@ export interface ThumbnailCardProps {
 }
 
 //not sure watching for live is the same up views. double check that on api response
-const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (props) => {
-        const [thumbImageRef, isHoveringOnThumbImage] = Platform.OS === 'web' ? useHover() : [null, false]
+const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbImageHover?: { thumbImageRef?: React.MutableRefObject<null> | boolean, isHoveringOnThumbImage?: boolean } }>
+        = ({
+               videoProps,
+               thumbImageHover: {isHoveringOnThumbImage, thumbImageRef}
+           }) => {
         const [channelImageRef, isHoveringOnChannelImage] = Platform.OS === 'web' ? useHover() : [null, false]
         const [titleRef, isHoveringOnTittle] = Platform.OS === 'web' ? useHover() : [null, false]
         const [channelNameRef, isHoveringOnChannelName] = Platform.OS === 'web' ? useHover() : [null, false]
@@ -38,15 +41,17 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps }> = (pr
             isLive,
             watching,
             timeLength
-        } = props.videoProps
+
+        } = videoProps
 
         return (
             <View style={styles.wrapper} ref={thumbnailCardRef}>
                 <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
+
                 {(Platform.OS === 'web') && (
                     < HoverAndTooltips hoverFlags={
                         {
-                            isHoveringOnThumbImage,
+                            isHoveringOnThumbImage: isHoveringOnThumbImage,
                             isHoveringOnChannelImage,
                             isHoveringOnTittle,
                             isHoveringOnChannelName,
@@ -77,21 +82,6 @@ const mobileStylesForVideoDetailsContainer = Platform.OS === 'android' || Platfo
     paddingRight: 10,
     paddingBottom: 15
 } : {}
-
-
-const scaleStyleForThumbnailCardContainer = (isHovering: boolean) => {
-    setTimeout(() => {
-        if (isHovering) {
-            return {
-                width: [{scale: 1.1}]
-            }
-        } else {
-            return {
-                width: [{scale: 1}]
-            }
-        }
-    }, 2000)
-}
 
 
 const styles = StyleSheet.create

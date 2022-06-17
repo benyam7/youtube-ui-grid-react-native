@@ -1,14 +1,14 @@
 import * as React from 'react';
-import {FunctionComponent, useState} from 'react';
+import {FunctionComponent, useEffect, useState} from 'react';
 import {FlatList, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
 import {useInfiniteQuery} from "react-query";
 import {youtubeApi} from "../api";
 import moment from "moment";
 import ThumbnailCard from "../components/ThumbnailCard";
 import * as Animatable from "react-native-animatable";
+import useHover from "../util/useHover";
 
 const Home = () => {
-    console.log("Platform", Platform.OS)
     const {
         isLoading,
         data,
@@ -52,7 +52,6 @@ const Home = () => {
 };
 
 const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
-
     const {
         publishedAt,
         title,
@@ -64,11 +63,22 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     const [scale, setScale] = useState({scaleX: 1, scaleY: 1})
 
+    const [thumbImageRef, isHoveringOnThumbImage] = useHover()
+
+    useEffect(() => {
+        if (isHoveringOnThumbImage) {
+                setScale({scaleX: 1.1, scaleY: 1.1})
+        } else {
+            setScale({scaleX: 1, scaleY: 1})
+        }
+    }, [isHoveringOnThumbImage])
+
+
     return (
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity key={videoId} onPress={() => {
             setScale({scaleX: 1.1, scaleY: 1.1})
         }}>
-            <Animatable.View transition={["scaleX", "scaleY"]} key={videoId} delay={2000}
+            <Animatable.View transition={["scaleX", "scaleY"]} key={videoId} delay={1000}
                              style={{scaleX: scale.scaleX, scaleY: scale.scaleY}}>
                 <ThumbnailCard key={videoId} videoProps={
                     {
@@ -82,7 +92,8 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                         watching: 400,
                         timeLength: "9:20"
                     }
-                }/>
+                } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
+                />
             </Animatable.View>
         </TouchableOpacity>
     )
