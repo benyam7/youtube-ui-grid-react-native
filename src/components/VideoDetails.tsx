@@ -35,7 +35,7 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
 
     return (
         <View style={styles.videoDetails}>
-            <View style={{flexDirection: "row", justifyContent: "space-between"}}>
+            <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: 'flex-start' }}>
                 <Text ref={titleRef} numberOfLines={2} style={styles.title}>{title}</Text>
                 {isHoveringOnThumbnailCard  &&
                     <Entypo name="dots-three-vertical" size={12} color="black" />}
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
     videoDetails: {
         flex: 1,
     },
-    title: {fontWeight: "bold",marginRight: 10 },
+    title: {fontWeight: "bold",marginRight: 10, maxWidth: '80%' },
 })
 
 export default VideoDetails
