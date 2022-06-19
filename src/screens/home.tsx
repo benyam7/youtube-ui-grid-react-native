@@ -65,7 +65,13 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     const [zIndex, setZIndex] = useState(0)
     const nodes = []
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
+    const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
 
+    let style = {
+        scaleX: scale.scaleX,
+        scaleY: scale.scaleY,
+        zIndex: zIndex,
+    }
     useEffect(() => {
         if (isHoveringOnThumbImage) {
             nodes.push(thumbImageRef)
@@ -74,25 +80,24 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                 setScale({scaleX: 1.2, scaleY: 1.2})
             }
             setZIndex(100)
-        } else {
+        }
+
+
+    }, [isHoveringOnThumbImage])
+
+    return (
+        <TouchableOpacity key={videoId} ref={thumbnailCardRef} onMouseLeave={() => {
             setScale({scaleX: 1, scaleY: 1})
             setZIndex(0)
             // do not just play the anim for every hover, only when spending atleast 1 second on the image
             if (nodes.length > 0) {
                 nodes.pop()
             }
-        }
-    }, [isHoveringOnThumbImage])
-
-
-    return (
-        <TouchableOpacity key={videoId}>
+        }}>
             <Animatable.View transition={["scaleX", "scaleY"]} key={videoId} delay={1000}
-                             style={{
-                                 scaleX: scale.scaleX,
-                                 scaleY: scale.scaleY,
-                                 zIndex: zIndex,
-                             }}>
+                             style={style}
+
+            >
                 <ThumbnailCard key={videoId} videoProps={
                     {
                         thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
@@ -106,7 +111,8 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                         timeLength: "9:20"
                     }
                 } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
-                />
+                               cardHover={{isHoveringOnThumbnailCard, thumbnailCardRef}}/>
+
             </Animatable.View>
         </TouchableOpacity>
     )
@@ -136,6 +142,7 @@ const renderThumbnailCardMobile = ({item}) => {
                 timeLength: "9:20"
             }
         } thumbImageHover={{thumbImageHover: {isHoveringOnThumbImage: false, thumbImageRef: null}}}
+                       cardHover={{isHoveringOnThumbnailCard: false, thumbnailCardRef: null}}
         />
     )
 }
