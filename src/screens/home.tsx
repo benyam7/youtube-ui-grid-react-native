@@ -63,6 +63,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     const [scale, setScale] = useState({scaleX: 1, scaleY: 1})
     const [zIndex, setZIndex] = useState(0)
+    const [boxShadow, setBoxShadow] = useState("none")
     const nodes = []
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
     const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
@@ -71,6 +72,8 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
         scaleX: scale.scaleX,
         scaleY: scale.scaleY,
         zIndex: zIndex,
+        boxShadow: boxShadow
+
     }
     useEffect(() => {
         if (isHoveringOnThumbImage) {
@@ -81,20 +84,24 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
             }
             setZIndex(100)
         }
-
-
     }, [isHoveringOnThumbImage])
 
     return (
-        <TouchableOpacity key={videoId} ref={thumbnailCardRef} onMouseLeave={() => {
-            setScale({scaleX: 1, scaleY: 1})
-            setZIndex(0)
-            // do not just play the anim for every hover, only when spending atleast 1 second on the image
-            if (nodes.length > 0) {
-                nodes.pop()
-            }
-        }}>
-            <Animatable.View transition={["scaleX", "scaleY"]} key={videoId} delay={1000}
+        <TouchableOpacity key={videoId} ref={thumbnailCardRef}
+                          onMouseEnter={() => {
+                              setBoxShadow(`4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38)`)
+                          }}
+                          onMouseLeave={() => {
+                              setScale({scaleX: 1, scaleY: 1})
+                              setZIndex(0)
+                              // do not just play the anim for every hover, only when spending atleast 1 second on the image
+                              if (nodes.length > 0) {
+                                  nodes.pop()
+                              }
+                              setBoxShadow(`0.0px 0.0px 0.0px #fff`)
+
+                          }} style={{margin: 10}}>
+            <Animatable.View transition={["scaleX", "scaleY", "shadowOffset", "shadowOpacity", "shadowRadius"]} key={videoId} delay={1000}
                              style={style}
 
             >
@@ -111,7 +118,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                         timeLength: "9:20"
                     }
                 } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
-                               cardHover={{isHoveringOnThumbnailCard, thumbnailCardRef}}/>
+                               cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef}}/>
 
             </Animatable.View>
         </TouchableOpacity>
