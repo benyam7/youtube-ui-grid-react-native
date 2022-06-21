@@ -67,6 +67,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     const nodes = []
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
     const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
+    const [isZoomedIn, setIsZoomedIn] = useState(false)
 
     let style = {
         scaleX: scale.scaleX,
@@ -75,21 +76,28 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
         boxShadow: boxShadow
 
     }
-    useEffect(() => {
+    useEffect( () => {
         if (isHoveringOnThumbImage) {
             nodes.push(thumbImageRef)
             // do not just play the anim for every hover, only when spending atleast 1 second on the image
             if (nodes.length > 0 && nodes[0] === thumbImageRef) {
                 setScale({scaleX: 1.2, scaleY: 1.2})
+                setIsZoomedIn(true)
             }
             setZIndex(100)
         }
+
+
+
+
     }, [isHoveringOnThumbImage])
+
 
     return (
         <TouchableOpacity key={videoId} ref={thumbnailCardRef}
                           onMouseEnter={() => {
                               setBoxShadow(`4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38)`)
+
                           }}
                           onMouseLeave={() => {
                               setScale({scaleX: 1, scaleY: 1})
@@ -99,9 +107,10 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                                   nodes.pop()
                               }
                               setBoxShadow(`0.0px 0.0px 0.0px #fff`)
+                              setIsZoomedIn(false)
 
                           }} style={{margin: 10}}>
-            <Animatable.View transition={["scaleX", "scaleY", "shadowOffset", "shadowOpacity", "shadowRadius"]} key={videoId} delay={1000}
+            <Animatable.View duration = {10} transition={["scaleX", "scaleY", "shadowOffset", "shadowOpacity", "shadowRadius"]} key={videoId} delay={1000}
                              style={style}
 
             >
@@ -118,7 +127,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                         timeLength: "9:20"
                     }
                 } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
-                               cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef}}/>
+                               cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef}} isZoomedIn={isZoomedIn}/>
 
             </Animatable.View>
         </TouchableOpacity>

@@ -7,6 +7,7 @@ import VideoDetails from "./VideoDetails";
 import ChannelImage from "./ChannelImage";
 import TimeLengthIndicator from "./TimeLengthIndicator";
 import CardActionsButton from "./CardActionsButton";
+import * as Animatable from "react-native-animatable";
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -22,15 +23,16 @@ export interface ThumbnailCardProps {
 }
 
 //not sure watching for live is the same up views. double check that on api response
-const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbImageHover?: { thumbImageRef?: React.MutableRefObject<null> | boolean, isHoveringOnThumbImage?: boolean }, cardHover?: { isHoveringOnThumbnailCard?: React.MutableRefObject<null> | boolean, thumbnailCardRef?: boolean } }>
+const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbImageHover?: { thumbImageRef?: React.MutableRefObject<null> | boolean, isHoveringOnThumbImage?: boolean }, cardHover?: { isHoveringOnThumbnailCard?: React.MutableRefObject<null> | boolean, thumbnailCardRef?: boolean }, isZoomedIn?: boolean }>
     = ({
            videoProps,
            thumbImageHover: {isHoveringOnThumbImage, thumbImageRef},
-           cardHover: {isHoveringOnThumbnailCard, thumbnailCardRef}
+           cardHover: {isHoveringOnThumbnailCard, thumbnailCardRef},
+           isZoomedIn
        }) => {
 
     const [channelImageRef, isHoveringOnChannelImage] = Platform.OS === 'web' ? useHover() : [null, false]
-    const [titleRef, isHoveringOnTittle] = Platform.OS === 'web' ? useHover() : [null, false]
+    const [titleRef, isHoveringOn] = Platform.OS === 'web' ? useHover() : [null, false]
     const [channelNameRef, isHoveringOnChannelName] = Platform.OS === 'web' ? useHover() : [null, false]
     const [checkMarkRef, isHoveringOnCheckMark] = Platform.OS === 'web' ? useHover() : [null, false]
 
@@ -47,10 +49,9 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
     } = videoProps
 
     if (isHoveringOnThumbnailCard) {
-        console.log("hovering card")
         styles.wrapper.margin = 0
     }
-
+    const paddings = applyPaddings(isZoomedIn)
     return (
         <View style={styles.wrapper}>
             <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
@@ -60,14 +61,15 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     {
                         isHoveringOnThumbImage: isHoveringOnThumbImage,
                         isHoveringOnChannelImage,
-                        isHoveringOnTittle,
+                        isHoveringOnTittle: isHoveringOn,
                         isHoveringOnChannelName,
                         isHoveringOnCheckMark,
                     }} data={{channelName, title}}/>)}
 
             {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
-            <View style={styles.videoDetailsContainer}>
+            <Animatable.View duration={100}  transition={["paddingLeft"]}
+                             style={{...styles.videoDetailsContainer, flexDirection: "row", ...paddings}}>
                 <ChannelImage channelImageRef={channelImageRef}/>
                 <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
                               isLive={isLive}
@@ -75,11 +77,13 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     channelNameRef: channelNameRef,
                     titleRef: titleRef,
                     checkMarkRef: checkMarkRef,
-                    isHoveringOnThumbnailCard: isHoveringOnThumbnailCard
+                    isHoveringOnThumbnailCard: isHoveringOnThumbnailCard,
+                    isHoveringChannelName: isHoveringOnChannelName
                 }}/>
-            </View>
+            </Animatable.View>
 
             <CardActionsContainer/>
+
         </View>
     );
 };
@@ -91,6 +95,15 @@ const CardActionsContainer = () => {
             <CardActionsButton/>
         </View>
     )
+}
+
+const applyPaddings = (isZoomedIn?: boolean) => {
+    if (isZoomedIn) {
+        return {
+            paddingLeft: 10,
+        }
+    }
+    return {paddingLeft: 0}
 }
 
 const mobileStylesForVideoDetailsContainer = Platform.OS === 'android' || Platform.OS === 'ios' ? {
@@ -119,8 +132,7 @@ const styles = StyleSheet.create
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        marginTop: 10,
-        marginBottom: 10,
+        margin: 10
     }
 
 
