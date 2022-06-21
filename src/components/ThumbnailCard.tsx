@@ -1,4 +1,4 @@
-import React, {FunctionComponent, useEffect} from 'react';
+import React, {FunctionComponent} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import useHover from "../util/useHover";
 import ThumbnailImage from "./ThubnailImage";
@@ -8,6 +8,7 @@ import ChannelImage from "./ChannelImage";
 import TimeLengthIndicator from "./TimeLengthIndicator";
 import CardActionsButton from "./CardActionsButton";
 import * as Animatable from "react-native-animatable";
+import {MaterialIcons} from '@expo/vector-icons';
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -79,8 +80,8 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
-
-            <CardActionsContainer/>
+            {isZoomedIn &&
+                <CardActionsContainer/>}
 
         </View>
     );
@@ -89,8 +90,11 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 const CardActionsContainer = () => {
     return (
         <View style={styles.cardActionsContainer}>
-            <CardActionsButton/>
-            <CardActionsButton/>
+            <CardActionsButton title={"WATCH LATTER"}
+                               children={<MaterialIcons name="watch-later" size={18} color="black" />}/>
+            <View style={{marginLeft: 5, marginRight: 5}}></View>
+            <CardActionsButton title={"ADD TO QUEUE"}
+                               children={<MaterialIcons name="playlist-play" size={18} color="black" />}/>
         </View>
     )
 }
@@ -128,9 +132,10 @@ const styles = StyleSheet.create
         },
     cardActionsContainer: {
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "center",
         alignItems: "center",
-        margin: 10
+        marginTop: 10,
+        marginBottom: 10,
     }
 
 
