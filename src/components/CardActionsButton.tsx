@@ -1,7 +1,5 @@
 import React, {FunctionComponent} from 'react';
 import {Pressable, Text, View} from "react-native";
-import {Entypo} from "@expo/vector-icons";
-import { MaterialIcons } from '@expo/vector-icons';
 
 const CardActionsButton: FunctionComponent<{title: string, children: any}> = (props) => {
     const {title, children} = props
@@ -13,13 +11,14 @@ const CardActionsButton: FunctionComponent<{title: string, children: any}> = (pr
                 justifyContent: 'center',
                 alignItems: 'center',
                 backgroundColor: '#f1eeee',
-                paddingLeft: 10,
-                paddingRight: 10,
+                paddingLeft: 15,
+                paddingRight: 15,
                 paddingTop: 5,
                 paddingBottom: 5,
             }}>
                 {children}
-                <Text>{title}</Text>
+                <View style={{marginRight: 2, marginLeft: 2}}></View>
+                <Text style={{fontSize: 12, color: 'gray'}}>{title}</Text>
             </View>
         </Pressable>
     )

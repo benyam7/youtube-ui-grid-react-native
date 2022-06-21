@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent, useEffect, useRef, useState} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import useHover from "../util/useHover";
 import ThumbnailImage from "./ThubnailImage";
@@ -8,7 +8,7 @@ import ChannelImage from "./ChannelImage";
 import TimeLengthIndicator from "./TimeLengthIndicator";
 import CardActionsButton from "./CardActionsButton";
 import * as Animatable from "react-native-animatable";
-import {MaterialIcons} from '@expo/vector-icons';
+import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -51,6 +51,25 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
     const paddings = applyPaddings(isZoomedIn)
 
+    const viewAnimation = useRef<Animatable.View & View>(null);
+    const [showCardActions, setShowCardActions] = useState(false)
+    useEffect(() => {
+        const Animation = async () => {
+
+            if (isZoomedIn) {
+                setShowCardActions(true)
+                if (viewAnimation.current)
+                    await viewAnimation.current.fadeIn();
+            } else {
+                if (viewAnimation.current)
+                    await viewAnimation.current.fadeOut();
+                setShowCardActions(false)
+            }
+        }
+
+        Animation();
+    }, [isZoomedIn, viewAnimation]);
+
     return (
         <View style={styles.wrapper}>
             <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
@@ -69,6 +88,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
             <Animatable.View easing={"ease"} duration={10} delay={1000} transition={["paddingLeft"]}
                              style={{...styles.videoDetailsContainer, flexDirection: "row", ...paddings}}>
+
                 <ChannelImage channelImageRef={channelImageRef}/>
                 <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
                               isLive={isLive}
@@ -80,8 +100,9 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
-            {isZoomedIn &&
-                <CardActionsContainer/>}
+            <Animatable.View ref={viewAnimation} delay={1000} duration ={200} easing={"ease"}>
+                {showCardActions && <CardActionsContainer/>}
+            </Animatable.View>
 
         </View>
     );
@@ -91,10 +112,10 @@ const CardActionsContainer = () => {
     return (
         <View style={styles.cardActionsContainer}>
             <CardActionsButton title={"WATCH LATTER"}
-                               children={<MaterialIcons name="watch-later" size={18} color="black" />}/>
+                               children={<MaterialCommunityIcons name="clock-time-two-outline" size={18} color="black" />}/>
             <View style={{marginLeft: 5, marginRight: 5}}></View>
             <CardActionsButton title={"ADD TO QUEUE"}
-                               children={<MaterialIcons name="playlist-play" size={18} color="black" />}/>
+                               children={<MaterialIcons name="playlist-play" size={18} color="black"/>}/>
         </View>
     )
 }
@@ -115,8 +136,7 @@ const mobileStylesForVideoDetailsContainer = Platform.OS === 'android' || Platfo
 } : {}
 
 
-const styles = StyleSheet.create
-({
+const styles = StyleSheet.create({
     wrapper:
         {
             width: Platform.OS === 'android' || Platform.OS === 'ios' ? "100%" : 320,
