@@ -76,6 +76,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
         boxShadow: boxShadow
 
     }
+
     useEffect( () => {
         if (isHoveringOnThumbImage) {
             nodes.push(thumbImageRef)
@@ -97,7 +98,6 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
         <TouchableOpacity key={videoId} ref={thumbnailCardRef}
                           onMouseEnter={() => {
                               setBoxShadow(`4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38)`)
-
                           }}
                           onMouseLeave={() => {
                               setScale({scaleX: 1, scaleY: 1})
@@ -127,7 +127,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                         timeLength: "9:20"
                     }
                 } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
-                               cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef}} isZoomedIn={isZoomedIn}/>
+                               cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef: thumbnailCardRef}} isZoomedIn={isZoomedIn}/>
 
             </Animatable.View>
         </TouchableOpacity>

@@ -40,7 +40,7 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
                 <Text ref={titleRef} numberOfLines={2}
                       style={styles.title}>{title}</Text>
                 {isHoveringOnThumbnailCard &&
-                    <Entypo name="dots-three-vertical" size={12} color="black"/>}
+                    <Entypo name="dots-three-vertical" size={12} color="black" style={{marginRight: 5}}/>}
                 {(Platform.OS === 'android' || Platform.OS === 'ios') &&
                     <Entypo name="dots-three-vertical" size={12} color="black"/>}
             </View>

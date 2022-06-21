@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent, useEffect} from 'react';
 import {Platform, StyleSheet, View} from 'react-native';
 import useHover from "../util/useHover";
 import ThumbnailImage from "./ThubnailImage";
@@ -27,7 +27,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
     = ({
            videoProps,
            thumbImageHover: {isHoveringOnThumbImage, thumbImageRef},
-           cardHover: {isHoveringOnThumbnailCard, thumbnailCardRef},
+           cardHover: {isHovering, thumbnailCardRef},
            isZoomedIn
        }) => {
 
@@ -48,10 +48,8 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
     } = videoProps
 
-    if (isHoveringOnThumbnailCard) {
-        styles.wrapper.margin = 0
-    }
     const paddings = applyPaddings(isZoomedIn)
+
     return (
         <View style={styles.wrapper}>
             <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
@@ -68,7 +66,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
             {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
-            <Animatable.View duration={100}  transition={["paddingLeft"]}
+            <Animatable.View duration={100} transition={["paddingLeft"]}
                              style={{...styles.videoDetailsContainer, flexDirection: "row", ...paddings}}>
                 <ChannelImage channelImageRef={channelImageRef}/>
                 <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
@@ -77,7 +75,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     channelNameRef: channelNameRef,
                     titleRef: titleRef,
                     checkMarkRef: checkMarkRef,
-                    isHoveringOnThumbnailCard: isHoveringOnThumbnailCard,
+                    isHoveringOnThumbnailCard: isHovering,
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
