@@ -63,7 +63,6 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     const [scale, setScale] = useState({scaleX: 1, scaleY: 1})
     const [zIndex, setZIndex] = useState(0)
-    const [boxShadow, setBoxShadow] = useState("none")
     const nodes = []
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
     const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
@@ -73,8 +72,6 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
         scaleX: scale.scaleX,
         scaleY: scale.scaleY,
         zIndex: zIndex,
-        boxShadow: boxShadow
-
     }
 
     useEffect( () => {
@@ -97,7 +94,6 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
     return (
         <TouchableOpacity key={videoId} ref={thumbnailCardRef}
                           onMouseEnter={() => {
-                              setBoxShadow(`4.0px 8.0px 8.0px hsl(0deg 0% 0% / 0.38)`)
                           }}
                           onMouseLeave={() => {
                               setScale({scaleX: 1, scaleY: 1})
@@ -106,11 +102,10 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                               if (nodes.length > 0) {
                                   nodes.pop()
                               }
-                              setBoxShadow(`0.0px 0.0px 0.0px #fff`)
                               setIsZoomedIn(false)
 
                           }} style={{margin: 10}}>
-            <Animatable.View duration = {10} transition={["scaleX", "scaleY", "shadowOffset", "shadowOpacity", "shadowRadius"]} key={videoId} delay={1000}
+            <Animatable.View duration = {100} transition={["scaleX", "scaleY"]} key={videoId} delay={1000}
                              style={style}
 
             >

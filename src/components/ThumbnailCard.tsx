@@ -66,7 +66,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
             {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
-            <Animatable.View duration={100} transition={["paddingLeft"]}
+            <Animatable.View easing={"ease"} duration={10} delay={1000} transition={["paddingLeft"]}
                              style={{...styles.videoDetailsContainer, flexDirection: "row", ...paddings}}>
                 <ChannelImage channelImageRef={channelImageRef}/>
                 <VideoDetails title={title} channelName={channelName} relativeTime={relativeTime}
