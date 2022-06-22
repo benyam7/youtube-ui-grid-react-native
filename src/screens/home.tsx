@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FunctionComponent, useEffect, useState} from 'react';
-import {FlatList, Platform, SafeAreaView, StyleSheet, Text, TouchableOpacity, View} from "react-native";
+import {FlatList, Platform, SafeAreaView, StyleSheet, Text, View} from "react-native";
 import {useInfiniteQuery} from "react-query";
 import {youtubeApi} from "../api";
 import moment from "moment";
@@ -64,6 +64,14 @@ const RenderThumbnailCardWeb = (props) => {
     const relativeTime = moment([year, month, day]).startOf('hour').fromNow()
     const [scale, setScale] = useState({scaleX: 1, scaleY: 1})
     const [zIndex, setZIndex] = useState(0)
+    const [bgColor, setBgColor] = useState('rgba(248,249,248,255)')
+    const [shadowProp, setShadowProps] = useState({
+        shadowColor: '#fff',
+        shadowOffset: {width: 0, height: 0},
+        shadowOpacity: 0,
+        shadowRadius: 0
+    })
+
     const nodes = []
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
     const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
@@ -73,19 +81,25 @@ const RenderThumbnailCardWeb = (props) => {
         scaleX: scale.scaleX,
         scaleY: scale.scaleY,
         zIndex: zIndex,
+        backgroundColor: bgColor,
+        ...shadowProp
     }
 
-    useEffect( () => {
+    useEffect(() => {
         if (isHoveringOnThumbImage) {
+            console.log("nodes", nodes)
             nodes.push(thumbImageRef)
             // do not just play the anim for every hover, only when spending atleast 1 second on the image
             if (nodes.length > 0 && nodes[0] === thumbImageRef) {
                 setScale({scaleX: 1.2, scaleY: 1.2})
+                setZIndex(100)
                 setIsZoomedIn(true)
-            }
-            setZIndex(100)
-        }
 
+                setBgColor('rgba(255,255,255,1)')
+
+            }
+
+        }
 
 
 
@@ -93,43 +107,59 @@ const RenderThumbnailCardWeb = (props) => {
 
 
     return (
-        <TouchableOpacity key={index} ref={thumbnailCardRef}
-                          onMouseEnter={() => {
-                          }}
-                          onMouseLeave={() => {
-                              // do not just play the anim for every hover, only when spending atleast 1 second on the image
-                              if (nodes.length > 0) {
-                                  nodes.pop()
-                              }
-                              setScale({scaleX: 1, scaleY: 1})
-                              setZIndex(0)
+        <Animatable.View
+            key={`${index}`}
+            onMouseEnter={() => {
+                setShadowProps({
+                    shadowColor: '#171717',
+                    shadowOffset: {width: -2, height: 4},
+                    shadowOpacity: 0.2,
+                    shadowRadius: 3,
+                })
+            }}
+            onMouseLeave={() => {
+                // do not just play the anim for every hover, only when spending atleast 1 second on the image
+                // if (nodes.length > 0) {
+                console.log("goin out")
+                nodes.pop()
+                // }
 
-                              setIsZoomedIn(false)
+                console.log("nodes", nodes)
+                setScale({scaleX: 1, scaleY: 1})
+                setZIndex(0)
+                setIsZoomedIn(false)
+                setBgColor('rgba(248,249,248,255)')
+                setShadowProps({
+                    shadowColor: '#fff',
+                    shadowOffset: {width: 0, height: 0},
+                    shadowOpacity: 0,
+                    shadowRadius: 0
+                })
 
-                          }} style={{...style, margin: 10}}
+            }}
+            duration={100}
+            transition={["scaleX", "scaleY", "zIndex", "backgroundColor", "shadowOpacity", "shadowOffset", "shadowColor", "shadowRadius"]}
+            delay={1000}
+            style={{...style, ...{zIndex}, margin: 10,}}
 
         >
-            <Animatable.View duration = {100} transition={["scaleX", "scaleY"]} delay={1000}
-                             style={style}
+            <ThumbnailCard key={`${index}`} videoProps={
+                {
+                    thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
+                    channelImageUri: thumbnails.default.url,
+                    title: title,
+                    channelName: channelTitle,
+                    views: 997,
+                    relativeTime,
+                    isLive: liveBroadcastContent === "live",
+                    watching: 400,
+                    timeLength: "9:20"
+                }
+            } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
+                           cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef: thumbnailCardRef}}
+                           isZoomedIn={isZoomedIn}/>
 
-            >
-                <ThumbnailCard key={index} videoProps={
-                    {
-                        thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
-                        channelImageUri: thumbnails.default.url,
-                        title: title,
-                        channelName: channelTitle,
-                        views: 997,
-                        relativeTime,
-                        isLive: liveBroadcastContent === "live",
-                        watching: 400,
-                        timeLength: "9:20"
-                    }
-                } thumbImageHover={{isHoveringOnThumbImage, thumbImageRef}}
-                               cardHover={{isHovering: isHoveringOnThumbnailCard, thumbnailCardRef: thumbnailCardRef}} isZoomedIn={isZoomedIn}/>
-
-            </Animatable.View>
-        </TouchableOpacity>
+        </Animatable.View>
     )
 }
 
@@ -166,7 +196,8 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     const {data} = props
     return (
         <View style={styles.webAppContainer}>
-            {data?.pages?.map(page => page.items).flat().map((item,index) => <RenderThumbnailCardWeb item={item} index={index} />)}
+            {data?.pages?.map(page => page.items).flat().map((item, index) => <RenderThumbnailCardWeb item={item}
+                                                                                                      index={index}/>)}
         </View>
     )
 
@@ -204,7 +235,7 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f8f8f9',
+        backgroundColor: 'rgba(248,249,248,255)',
     },
     mobileAppContainer: {
         flex: 1,

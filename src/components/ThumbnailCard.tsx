@@ -101,7 +101,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
-            <Animatable.View duration = {1000} ref={viewAnimation} delay={1000} >
+            <Animatable.View duration = {1000} ref={viewAnimation} delay={2000} >
                 {showCardActions && <CardActionsContainer/>}
             </Animatable.View>
 
@@ -142,8 +142,7 @@ const styles = StyleSheet.create({
     wrapper:
         {
             width: Platform.OS === 'android' || Platform.OS === 'ios' ? "100%" : 320,
-            backgroundColor: '#f8f8f9',
-        }
+         }
     ,
     videoDetailsContainer:
         {
