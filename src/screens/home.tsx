@@ -29,7 +29,6 @@ const Home = () => {
 
     const loadMore = () => {
         if (hasNextPage) {
-            console.log("fetching next page")
             fetchNextPage();
         }
     }
@@ -96,12 +95,13 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
                           onMouseEnter={() => {
                           }}
                           onMouseLeave={() => {
-                              setScale({scaleX: 1, scaleY: 1})
-                              setZIndex(0)
                               // do not just play the anim for every hover, only when spending atleast 1 second on the image
                               if (nodes.length > 0) {
                                   nodes.pop()
                               }
+                              setScale({scaleX: 1, scaleY: 1})
+                              setZIndex(0)
+
                               setIsZoomedIn(false)
 
                           }} style={{margin: 10}}>

@@ -1,4 +1,3 @@
-// get back to this when u have time and refactor for the uri
 import React, {FunctionComponent, MutableRefObject} from "react";
 import {Image, StyleSheet, View} from "react-native";
 

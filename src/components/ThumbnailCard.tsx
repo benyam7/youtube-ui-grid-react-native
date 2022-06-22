@@ -8,7 +8,7 @@ import ChannelImage from "./ChannelImage";
 import TimeLengthIndicator from "./TimeLengthIndicator";
 import CardActionsButton from "./CardActionsButton";
 import * as Animatable from "react-native-animatable";
-import {MaterialIcons, MaterialCommunityIcons} from '@expo/vector-icons';
+import {MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 
 export interface ThumbnailCardProps {
     thumbnailUri: string,
@@ -53,18 +53,18 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
     const viewAnimation = useRef<Animatable.View & View>(null);
     const [showCardActions, setShowCardActions] = useState(false)
+
     useEffect(() => {
         const Animation = async () => {
+                if (isZoomedIn) {
+                        setShowCardActions(true)
+                        if (viewAnimation.current)
+                            await viewAnimation.current.fadeIn();
+                } else {
+                    if (viewAnimation.current)
+                        await viewAnimation.current.fadeOut();
+                }
 
-            if (isZoomedIn) {
-                setShowCardActions(true)
-                if (viewAnimation.current)
-                    await viewAnimation.current.fadeIn();
-            } else {
-                if (viewAnimation.current)
-                    await viewAnimation.current.fadeOut();
-                setShowCardActions(false)
-            }
         }
 
         Animation();
@@ -100,7 +100,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
-            <Animatable.View ref={viewAnimation} delay={1000} duration ={200} easing={"ease"}>
+            <Animatable.View ref={viewAnimation} delay={1000} >
                 {showCardActions && <CardActionsContainer/>}
             </Animatable.View>
 
@@ -112,7 +112,8 @@ const CardActionsContainer = () => {
     return (
         <View style={styles.cardActionsContainer}>
             <CardActionsButton title={"WATCH LATTER"}
-                               children={<MaterialCommunityIcons name="clock-time-two-outline" size={18} color="black" />}/>
+                               children={<MaterialCommunityIcons name="clock-time-two-outline" size={18}
+                                                                 color="black"/>}/>
             <View style={{marginLeft: 5, marginRight: 5}}></View>
             <CardActionsButton title={"ADD TO QUEUE"}
                                children={<MaterialIcons name="playlist-play" size={18} color="black"/>}/>
