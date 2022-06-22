@@ -112,17 +112,20 @@ const RenderThumbnailCardWeb = (props) => {
             onMouseEnter={() => {
                 setShadowProps({
                     shadowColor: '#171717',
-                    shadowOffset: {width: -2, height: 4},
-                    shadowOpacity: 0.2,
-                    shadowRadius: 3,
+                    shadowOffset: {
+                        width: 0,
+                        height: 4,
+                    },
+                    shadowOpacity: 0.32,
+                    shadowRadius: 5.46,
                 })
             }}
             onMouseLeave={() => {
                 // do not just play the anim for every hover, only when spending atleast 1 second on the image
-                // if (nodes.length > 0) {
+                if (nodes.length > 0) {
                 console.log("goin out")
                 nodes.pop()
-                // }
+                }
 
                 console.log("nodes", nodes)
                 setScale({scaleX: 1, scaleY: 1})
