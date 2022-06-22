@@ -50,7 +50,9 @@ const Home = () => {
         ;
 };
 
-const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
+const RenderThumbnailCardWeb = (props) => {
+    const {item: {snippet}, index} = props
+
     const {
         publishedAt,
         title,
@@ -91,7 +93,7 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
 
 
     return (
-        <TouchableOpacity key={videoId} ref={thumbnailCardRef}
+        <TouchableOpacity key={index} ref={thumbnailCardRef}
                           onMouseEnter={() => {
                           }}
                           onMouseLeave={() => {
@@ -104,12 +106,14 @@ const renderThumbnailCardWeb = ({snippet, id: {videoId}}) => {
 
                               setIsZoomedIn(false)
 
-                          }} style={{margin: 10}}>
-            <Animatable.View duration = {100} transition={["scaleX", "scaleY"]} key={videoId} delay={1000}
+                          }} style={{...style, margin: 10}}
+
+        >
+            <Animatable.View duration = {100} transition={["scaleX", "scaleY"]} delay={1000}
                              style={style}
 
             >
-                <ThumbnailCard key={videoId} videoProps={
+                <ThumbnailCard key={index} videoProps={
                     {
                         thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
                         channelImageUri: thumbnails.default.url,
@@ -162,7 +166,7 @@ const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     const {data} = props
     return (
         <View style={styles.webAppContainer}>
-            {data?.pages?.map(page => page.items).flat().map(item => renderThumbnailCardWeb(item))}
+            {data?.pages?.map(page => page.items).flat().map((item,index) => <RenderThumbnailCardWeb item={item} index={index} />)}
         </View>
     )
 

@@ -82,7 +82,8 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                         isHoveringOnTittle: isHoveringOn,
                         isHoveringOnChannelName,
                         isHoveringOnCheckMark,
-                    }} data={{channelName, title}}/>)}
+
+                    }} data={{channelName, title}}  isZoomedIn = {isZoomedIn} />)}
 
             {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
@@ -100,7 +101,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
-            <Animatable.View ref={viewAnimation} delay={1000} >
+            <Animatable.View duration = {1000} ref={viewAnimation} delay={1000} >
                 {showCardActions && <CardActionsContainer/>}
             </Animatable.View>
 
@@ -113,10 +114,10 @@ const CardActionsContainer = () => {
         <View style={styles.cardActionsContainer}>
             <CardActionsButton title={"WATCH LATTER"}
                                children={<MaterialCommunityIcons name="clock-time-two-outline" size={18}
-                                                                 color="black"/>}/>
+                                                                 color="gray"/>}/>
             <View style={{marginLeft: 5, marginRight: 5}}></View>
             <CardActionsButton title={"ADD TO QUEUE"}
-                               children={<MaterialIcons name="playlist-play" size={18} color="black"/>}/>
+                               children={<MaterialIcons name="playlist-play" size={18} color="gray"/>}/>
         </View>
     )
 }

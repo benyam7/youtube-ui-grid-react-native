@@ -9,7 +9,7 @@ const HoverAndTooltips: FunctionComponent<{
         isHoveringOnTittle: boolean | MutableRefObject<null>,
         isHoveringOnChannelName: boolean | MutableRefObject<null>,
         isHoveringOnCheckMark?: boolean | MutableRefObject<null>
-    }, data: { channelName: string, title: string }
+    }, data: { channelName: string, title: string }, isZoomedIn?: boolean
 }> = (props) => {
     const {
         hoverFlags: {
@@ -18,12 +18,12 @@ const HoverAndTooltips: FunctionComponent<{
             isHoveringOnTittle,
             isHoveringOnThumbImage,
             isHoveringOnCheckMark
-        }, data: {channelName, title}
+        }, data: {channelName, title}, isZoomedIn
     } = props
     return (
         <>
             {
-                isHoveringOnThumbImage && <Tooltip message={"Keep hovering to play"} position={{top: 155, left: 177}}/>
+                (isHoveringOnThumbImage) && <Tooltip message={"Keep hovering to play"} position={{top: 155, left: 177}}/>
             }
             {
                 isHoveringOnChannelImage &&
