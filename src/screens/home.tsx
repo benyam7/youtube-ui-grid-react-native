@@ -87,28 +87,19 @@ const RenderThumbnailCardWeb = (props) => {
 
     useEffect(() => {
         if (isHoveringOnThumbImage) {
-            console.log("nodes", nodes)
-            nodes.push(thumbImageRef)
-            // do not just play the anim for every hover, only when spending atleast 1 second on the image
-            if (nodes.length > 0 && nodes[0] === thumbImageRef) {
-                setScale({scaleX: 1.2, scaleY: 1.2})
-                setZIndex(100)
+            nodes.push(thumbnailCardRef)
+            setScale({scaleX: 1.2, scaleY: 1.2})
+            setZIndex(100)
+            setTimeout(() => {
                 setIsZoomedIn(true)
-
-                setBgColor('rgba(255,255,255,1)')
-
-            }
-
+            }, 1000)
+            setBgColor('rgba(255,255,255,1)')
         }
-
-
-
     }, [isHoveringOnThumbImage])
 
 
     return (
         <Animatable.View
-            key={`${index}`}
             onMouseEnter={() => {
                 setShadowProps({
                     shadowColor: '#171717',
@@ -121,16 +112,11 @@ const RenderThumbnailCardWeb = (props) => {
                 })
             }}
             onMouseLeave={() => {
-                // do not just play the anim for every hover, only when spending atleast 1 second on the image
-                if (nodes.length > 0) {
-                console.log("goin out")
-                nodes.pop()
-                }
-
-                console.log("nodes", nodes)
                 setScale({scaleX: 1, scaleY: 1})
                 setZIndex(0)
-                setIsZoomedIn(false)
+                setTimeout(() => {
+                    setIsZoomedIn(false)
+                }, 1000)
                 setBgColor('rgba(248,249,248,255)')
                 setShadowProps({
                     shadowColor: '#fff',
@@ -146,7 +132,7 @@ const RenderThumbnailCardWeb = (props) => {
             style={{...style, ...{zIndex}, margin: 10,}}
 
         >
-            <ThumbnailCard key={`${index}`} videoProps={
+            <ThumbnailCard videoProps={
                 {
                     thumbnailUri: thumbnails.high.url, /*change this for mobile devices*/
                     channelImageUri: thumbnails.default.url,
@@ -197,10 +183,13 @@ const renderThumbnailCardMobile = ({item}) => {
 
 const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
     const {data} = props
+
+
     return (
         <View style={styles.webAppContainer}>
             {data?.pages?.map(page => page.items).flat().map((item, index) => <RenderThumbnailCardWeb item={item}
-                                                                                                      index={index}/>)}
+                                                                                                      index={index}
+                                                                                                      key={index}/>)}
         </View>
     )
 

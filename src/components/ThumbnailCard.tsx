@@ -71,7 +71,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
     }, [isZoomedIn, viewAnimation]);
 
     return (
-        <View style={styles.wrapper}>
+        <View style={styles.wrapper} ref={thumbnailCardRef}>
             <ThumbnailImage thumbImageRef={thumbImageRef} uri={thumbnailUri}/>
 
             {(Platform.OS === 'web') && (
@@ -87,7 +87,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
 
             {(timeLength && !isHoveringOnThumbImage) && <TimeLengthIndicator timeLength={timeLength}/>}
 
-            <Animatable.View easing={"ease"} duration={10} delay={1000} transition={["paddingLeft"]}
+            <Animatable.View easing={"ease"} duration={10} transition={["paddingLeft"]}
                              style={{...styles.videoDetailsContainer, flexDirection: "row", ...paddings}}>
 
                 <ChannelImage channelImageRef={channelImageRef}/>
@@ -101,7 +101,7 @@ const ThumbnailCard: FunctionComponent<{ videoProps: ThumbnailCardProps, thumbIm
                     isHoveringChannelName: isHoveringOnChannelName
                 }}/>
             </Animatable.View>
-            <Animatable.View duration = {1000} ref={viewAnimation} delay={2000} >
+            <Animatable.View ref={viewAnimation} delay={1000} >
                 {showCardActions && <CardActionsContainer/>}
             </Animatable.View>
 

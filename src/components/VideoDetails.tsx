@@ -4,6 +4,7 @@ import {Entypo} from "@expo/vector-icons";
 import PostedVideoDetails from "./PostedVideo";
 import LiveVideoDetails from "./LiveBroadcastDetails";
 import ChannelNameAndCheckMarkIndicator from "./ChannelNameAndCheckMarkIndicator";
+import useHover from "../util/useHover";
 
 interface VideoDetailsProps {
     title: string,
@@ -39,8 +40,8 @@ const VideoDetails: FunctionComponent<VideoDetailsProps> = (props) => {
             <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: 'flex-start'}}>
                 <Text ref={titleRef} numberOfLines={2}
                       style={styles.title}>{title}</Text>
-                {isHoveringOnThumbnailCard &&
-                    <Entypo name="dots-three-vertical" size={12} color="black" style={{marginRight: 5}}/>}
+                {(isHoveringOnThumbnailCard) &&
+                    <Entypo name="dots-three-vertical" size={18} color="black" style={{paddingRight: 10}}/>}
                 {(Platform.OS === 'android' || Platform.OS === 'ios') &&
                     <Entypo name="dots-three-vertical" size={12} color="black"/>}
             </View>

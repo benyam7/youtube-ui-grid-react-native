@@ -23,7 +23,7 @@ const HoverAndTooltips: FunctionComponent<{
     return (
         <>
             {
-                (isHoveringOnThumbImage) && <Tooltip message={"Keep hovering to play"} position={{top: 155, left: 177}}/>
+                (isHoveringOnThumbImage) && <Tooltip message={!isZoomedIn && "Keep hovering to play"} position={{top: 155, left: 177}}/>
             }
             {
                 isHoveringOnChannelImage &&
