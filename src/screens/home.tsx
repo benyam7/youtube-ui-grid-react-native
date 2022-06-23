@@ -7,6 +7,7 @@ import moment from "moment";
 import ThumbnailCard from "../components/ThumbnailCard";
 import * as Animatable from "react-native-animatable";
 import useHover from "../util/useHover";
+import InfiniteScroll from "react-infinite-scroll-component";
 
 const Home = () => {
     const {
@@ -27,6 +28,7 @@ const Home = () => {
         }
     );
 
+
     const loadMore = () => {
         if (hasNextPage) {
             fetchNextPage();
@@ -43,7 +45,8 @@ const Home = () => {
         isLoading ? (
             <Text>Loading...</Text>
         ) : <RenderPlatformSpecificComponents data={data} loadMore={loadMore}
-                                              isFetchingNextPage={isFetchingNextPage} renderLoading={renderLoading}/>
+                                              isFetchingNextPage={isFetchingNextPage} renderLoading={renderLoading}
+                                              hasNextPage={hasNextPage}/>
 
 
     )
@@ -52,6 +55,7 @@ const Home = () => {
 
 const RenderThumbnailCardWeb = (props) => {
     const {item: {snippet}, index} = props
+
 
     const {
         publishedAt,
@@ -76,6 +80,7 @@ const RenderThumbnailCardWeb = (props) => {
     const [thumbImageRef, isHoveringOnThumbImage] = useHover()
     const [thumbnailCardRef, isHoveringOnThumbnailCard] = useHover()
     const [isZoomedIn, setIsZoomedIn] = useState(false)
+
 
     let style = {
         scaleX: scale.scaleX,
@@ -181,18 +186,28 @@ const renderThumbnailCardMobile = ({item}) => {
     )
 }
 
-const RenderForWeb: FunctionComponent<{ data: any }> = (props) => {
-    const {data} = props
-
-
+const RenderForWeb: FunctionComponent<{ data: any, loadMore: () => void, hasNextPage: boolean }> = (props) => {
+    const {data, loadMore, hasNextPage} = props
+    const items = data?.pages?.map(page => page.items).flat()
     return (
-        <View style={styles.webAppContainer}>
-            {data?.pages?.map(page => page.items).flat().map((item, index) => <RenderThumbnailCardWeb item={item}
-                                                                                                      index={index}
-                                                                                                      key={index}/>)}
-        </View>
+        <InfiniteScroll
+            style={styles.webAppContainer}
+            dataLength={items.length} //This is important field to render the next data
+            next={loadMore}
+            hasMore={hasNextPage}
+            loader={<Text>Loading...</Text>}
+            endMessage={
+                <p style={{textAlign: 'center'}}>
+                    <b>Yay! You have seen it all</b>
+                </p>
+            }
+        >
+            <View style={styles.webAppContainer}>
+                {items.map((item, index) => <RenderThumbnailCardWeb item={item}
+                                                                    index={index} key={index}/>)}
+            </View>
+        </InfiniteScroll>
     )
-
 }
 const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
     const {data, loadMore, isFetchingNextPage, renderLoading} = props
@@ -210,10 +225,10 @@ const RenderForMobile: FunctionComponent<{ data: any, loadMore: () => void, isFe
         </SafeAreaView>)
 }
 
-const RenderPlatformSpecificComponents: FunctionComponent<{ data: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void }> = (props) => {
-    const {data, loadMore, isFetchingNextPage, renderLoading} = props
+const RenderPlatformSpecificComponents: FunctionComponent<{ data: any, loadMore: () => void, isFetchingNextPage: boolean, renderLoading: () => void, hasNextPage: boolean }> = (props) => {
+    const {data, loadMore, isFetchingNextPage, renderLoading, hasNextPage} = props
 
-    return Platform.OS === 'web' ? <RenderForWeb data={data}/> :
+    return Platform.OS === 'web' ? <RenderForWeb data={data} loadMore={loadMore} hasNextPage={hasNextPage}/> :
         <RenderForMobile data={data} loadMore={loadMore} isFetchingNextPage={isFetchingNextPage}
                          renderLoading={renderLoading}
 
