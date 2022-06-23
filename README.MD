@@ -1,4 +1,4 @@
-MightyByte Frontend <React/RN> Challenge, Benyam Seifu
+Youtube UI grid React Native. IOS, Android and Web.
 
 
 - Author: Benyam Seifu (github: @benyam7)
