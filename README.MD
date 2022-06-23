@@ -7,3 +7,6 @@ MightyByte Frontend <React/RN> Challenge, Benyam Seifu
     attention to UI elements, such as animations and tooltips or video popup when hovering the mouse over things.
   - infinite scroll.
   - React Query for async state management.
+
+- Running locally
+  - `npm start` or `expo start` 
